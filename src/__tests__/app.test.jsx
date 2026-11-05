@@ -170,6 +170,13 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(
       screen.getByText(/4\) Jaka dieta Cię interesuje\?/i)
     ).toBeInTheDocument();
+    expect(screen.getByText('Klasyczna')).toBeInTheDocument();
+    expect(screen.getByText('Wegetariańska')).toBeInTheDocument();
+    expect(screen.getByText('Bez mięsa')).toBeInTheDocument();
+    expect(screen.getByText('Bez glutenu')).toBeInTheDocument();
+    expect(screen.getByText('Wyklucza pszenicę, żyto i jęczmień')).toBeInTheDocument();
+    expect(screen.getByText('Bez laktozy')).toBeInTheDocument();
+    expect(screen.getByText('Wybór produktów w wariancie bez laktozy lub roślinnych alternatyw')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Dalej'));
 
     // Krok 5: Czy chcesz wykluczyć jakieś produkty? -> Kliknij TAK, aby przetestować wyszukiwarkę

@@ -327,17 +327,10 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 4: Jaka dieta? */}
         {step === 4 && (
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
-              <Salad className="w-3.5 h-3.5" />
-              <span>Pytanie 4 z 5</span>
-            </div>
-            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
+          <div className="space-y-6 pt-1">
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
               4) Jaka dieta Cię interesuje?
             </h1>
-            <p className="text-sm text-neutral-600">
-              Wybierz preferowany styl odżywiania – w każdej chwili zmienisz go także z poziomu filtrów planu.
-            </p>
 
             <div className="space-y-2.5 pt-1">
               {DIET_OPTIONS.map((option) => {
@@ -365,9 +358,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                         <p className="text-base font-extrabold text-neutral-900">
                           {option.label}
                         </p>
-                        <p className="text-xs text-neutral-600 mt-0.5">
-                          {option.description}
-                        </p>
+                        {option.description && (
+                          <p className="text-xs text-neutral-600 mt-0.5">
+                            {option.description}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div
