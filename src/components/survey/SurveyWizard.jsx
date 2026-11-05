@@ -18,16 +18,24 @@ import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
 import FoodIcon from '../common/FoodIcon';
 
-function PeopleRollerPicker({ value, onChange }) {
+function RollerPicker({
+  label,
+  value,
+  onChange,
+  min = 1,
+  max = 6,
+}) {
   const touchStartY = useRef(0);
   const ITEM_HEIGHT = 48; // px
 
+  const items = Array.from({ length: max - min + 1 }, (_, i) => min + i);
+
   const handlePrev = () => {
-    onChange(Math.max(1, value - 1));
+    onChange(Math.max(min, value - 1));
   };
 
   const handleNext = () => {
-    onChange(Math.min(6, value + 1));
+    onChange(Math.min(max, value + 1));
   };
 
   const handleWheel = (e) => {
@@ -62,10 +70,13 @@ function PeopleRollerPicker({ value, onChange }) {
     }
   };
 
+  const currentIndex = items.indexOf(value);
+  const offsetIndex = currentIndex !== -1 ? currentIndex : 0;
+
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 flex items-center justify-center gap-4 shadow-xs">
       <span className="text-xl sm:text-2xl font-extrabold text-neutral-900 select-none">
-        Liczba osób:
+        {label}
       </span>
 
       {/* Roller góra-dół */}
@@ -73,7 +84,7 @@ function PeopleRollerPicker({ value, onChange }) {
         <button
           type="button"
           onClick={handlePrev}
-          disabled={value <= 1}
+          disabled={value <= min}
           className="p-1 text-neutral-400 hover:text-red-700 disabled:opacity-15 disabled:pointer-events-none transition cursor-pointer active:scale-90"
           aria-label="Przewiń w górę (mniej)"
         >
@@ -84,9 +95,9 @@ function PeopleRollerPicker({ value, onChange }) {
           tabIndex={0}
           role="spinbutton"
           aria-valuenow={value}
-          aria-valuemin={1}
-          aria-valuemax={6}
-          aria-label="Liczba osób"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-label={label.replace(':', '').trim()}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
@@ -97,10 +108,10 @@ function PeopleRollerPicker({ value, onChange }) {
           <div
             className="transition-transform duration-250 ease-out will-change-transform"
             style={{
-              transform: `translateY(${(1 - (value - 1)) * ITEM_HEIGHT}px)`,
+              transform: `translateY(${(1 - offsetIndex) * ITEM_HEIGHT}px)`,
             }}
           >
-            {[1, 2, 3, 4, 5, 6].map((num) => {
+            {items.map((num) => {
               const isSelected = num === value;
               return (
                 <button
@@ -124,7 +135,7 @@ function PeopleRollerPicker({ value, onChange }) {
         <button
           type="button"
           onClick={handleNext}
-          disabled={value >= 6}
+          disabled={value >= max}
           className="p-1 text-neutral-400 hover:text-red-700 disabled:opacity-15 disabled:pointer-events-none transition cursor-pointer active:scale-90"
           aria-label="Przewiń w dół (więcej)"
         >
@@ -206,55 +217,38 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               1) Na ile osób przygotować plan?
             </h1>
 
-            <PeopleRollerPicker
+            <RollerPicker
+              label="Liczba osób:"
               value={peopleCount}
               onChange={setPeopleCount}
+              min={1}
+              max={6}
             />
           </div>
         )}
 
         {/* KROK 2: Ile dni? */}
         {step === 2 && (
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Pytanie 2 z 5</span>
+          <div className="space-y-6 pt-1">
+            <div>
+              <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+                2) Na ile dni chcesz zaplanować posiłki?
+              </h1>
+              <p className="text-sm text-neutral-600 mt-2">
+                Na każdy dzień znajdziemy dla Ciebie 4 posiłki: śniadanie, obiad, kolacje i przekąskę.
+              </p>
             </div>
-            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
-              2) Na ile dni chcesz zaplanować posiłki?
-            </h1>
-            <p className="text-sm text-neutral-600">
-              Na każdy dzień wygenerujemy 4 zbilansowane posiłki: Śniadanie, Obiad, Kolację oraz Przekąskę.
-            </p>
 
-            <div className="grid grid-cols-3 gap-2.5 pt-2">
-              {[1, 2, 3, 4, 5, 7].map((d) => {
-                const active = daysCount === d;
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => {
-                      setDaysCount(d);
-                      setBudgetPln(Math.round(d * peopleCount * 22));
-                    }}
-                    className={`p-4 rounded-2xl border-2 text-center transition active:scale-98 ${
-                      active
-                        ? 'border-red-600 bg-red-50/70 font-black text-red-700 shadow-sm'
-                        : 'border-neutral-200 bg-white text-neutral-800 hover:border-neutral-300'
-                    }`}
-                  >
-                    <p className="text-2xl font-black">{d}</p>
-                    <p className="text-xs font-bold mt-0.5">
-                      {d === 1 ? 'dzień' : 'dni'}
-                    </p>
-                    <p className="text-[11px] text-neutral-500 mt-1">
-                      {d * 4} posiłków
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+            <RollerPicker
+              label="Liczba dni:"
+              value={daysCount}
+              onChange={(d) => {
+                setDaysCount(d);
+                setBudgetPln(Math.round(d * peopleCount * 22));
+              }}
+              min={1}
+              max={7}
+            />
           </div>
         )}
 

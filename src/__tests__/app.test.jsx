@@ -133,10 +133,22 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     fireEvent.click(screen.getByText('Dalej'));
 
-    // Krok 2: Ile dni?
+    // Krok 2: Ile dni? - roller wyboru (1-7)
     expect(
       screen.getByText(/2\) Na ile dni chcesz zaplanować posiłki\?/i)
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Na każdy dzień znajdziemy dla Ciebie 4 posiłki: śniadanie, obiad, kolacje i przekąskę\./i)
+    ).toBeInTheDocument();
+    expect(screen.getByText('Liczba dni:')).toBeInTheDocument();
+    const daysRoller = screen.getByRole('spinbutton', { name: /Liczba dni/i });
+    expect(daysRoller).toBeInTheDocument();
+    expect(daysRoller).toHaveAttribute('aria-valuenow', '3');
+
+    // Test rollera: zmiana na 5 dni za pomocą kliknięcia
+    fireEvent.click(screen.getByRole('button', { name: '5' }));
+    expect(daysRoller).toHaveAttribute('aria-valuenow', '5');
+
     fireEvent.click(screen.getByText('Dalej'));
 
     // Krok 3: Jaki budżet?
