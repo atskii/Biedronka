@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, X, CheckCircle2, ArrowLeft, Sparkles, Ban } from 'lucide-react';
 import { PRODUCTS, STORE_AISLES } from '../../data/biedronkaCatalog';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
 
 export default function ExclusionSearch({
   excludedProductIds = [],
@@ -105,10 +106,11 @@ export default function ExclusionSearch({
                       : 'bg-white text-neutral-700 border-neutral-200 hover:border-red-300'
                   }`}
                 >
-                  <FoodIcon
+                  <ProductImage
+                    productId={prodId}
+                    name={prod.name}
                     category={prod.category}
-                    subType={prod.name}
-                    className="w-3.5 h-3.5 opacity-80"
+                    className="w-4 h-4 rounded-md shrink-0"
                   />
                   <span>{prod.name.split(' ')[0]}</span>
                   {isExcluded && <X className="w-3.5 h-3.5" />}
@@ -192,12 +194,11 @@ export default function ExclusionSearch({
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <FoodIcon
+                  <ProductImage
+                    productId={product.id}
+                    name={product.name}
                     category={product.category}
-                    subType={product.name}
-                    className="w-5 h-5 text-neutral-800"
-                    withContainer
-                    containerClassName="w-9 h-9 rounded-xl shrink-0"
+                    className="w-10 h-10 rounded-xl shrink-0"
                     tone={isExcluded ? 'crimson' : 'default'}
                   />
                   <div className="min-w-0">

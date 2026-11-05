@@ -26,180 +26,12 @@ import {
   Fish,
   Croissant,
 } from 'lucide-react';
-import { DIET_OPTIONS, PRODUCTS } from '../../data/biedronkaCatalog';
+import { DIET_OPTIONS, PRODUCTS, EXCLUSION_GROUPS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
 
-export const EXCLUSION_GROUPS = [
-  {
-    id: 'pomidor',
-    name: 'Pomidor',
-    icon: Apple,
-    productIds: ['pomidory_malinowe', 'pomidory_koktajlowe_promo', 'pomidory_rzymskie'],
-  },
-  {
-    id: 'ogorek',
-    name: 'Ogórek',
-    icon: Carrot,
-    productIds: ['ogorek_zielony_fit'],
-  },
-  {
-    id: 'papryka',
-    name: 'Papryka',
-    icon: Apple,
-    productIds: ['papryka_czerwona_fit'],
-  },
-  {
-    id: 'brokul',
-    name: 'Brokuł',
-    icon: LeafyGreen,
-    productIds: ['brokul_swiezy'],
-  },
-  {
-    id: 'cukinia',
-    name: 'Cukinia',
-    icon: Carrot,
-    productIds: ['cukinia_zielona_promo'],
-  },
-  {
-    id: 'szpinak',
-    name: 'Szpinak',
-    icon: Leaf,
-    productIds: ['szpinak_baby_fit'],
-  },
-  {
-    id: 'salata',
-    name: 'Sałata',
-    icon: Salad,
-    productIds: ['mix_salat_fit'],
-  },
-  {
-    id: 'pieczarki',
-    name: 'Pieczarki',
-    icon: Carrot,
-    productIds: ['pieczarki_swieze'],
-  },
-  {
-    id: 'ziemniaki',
-    name: 'Ziemniaki',
-    icon: Carrot,
-    productIds: ['ziemniaki_mlode_promo', 'bataty_fit'],
-  },
-  {
-    id: 'mleko',
-    name: 'Mleko',
-    icon: Milk,
-    productIds: ['mleko_bez_laktozy_promo', 'napoj_owsiany_govege_fit'],
-  },
-  {
-    id: 'twarog',
-    name: 'Twaróg',
-    icon: Milk,
-    productIds: ['twarog_chudy_fit'],
-  },
-  {
-    id: 'jogurt_skyr',
-    name: 'Jogurt / Skyr',
-    icon: Milk,
-    productIds: [
-      'skyr_naturalny_fit',
-      'jogurt_grecki_promo',
-      'jogurt_kokosowy_govege_fit',
-      'serek_wiejski_lekki_fit',
-    ],
-  },
-  {
-    id: 'ser',
-    name: 'Ser żółty / Mozzarella',
-    icon: Milk,
-    productIds: ['ser_gouda_promo', 'mozzarella_light_fit'],
-  },
-  {
-    id: 'jajka',
-    name: 'Jajka',
-    icon: Egg,
-    productIds: ['jajka_wiejskie_promo'],
-  },
-  {
-    id: 'kurczak',
-    name: 'Kurczak',
-    icon: Drumstick,
-    productIds: [
-      'filet_z_kurczaka_promo',
-      'polędwiczki_z_kurczaka_fit',
-      'kabanosy_drobiowe_promo',
-    ],
-  },
-  {
-    id: 'indyk',
-    name: 'Indyk',
-    icon: Drumstick,
-    productIds: ['mieso_mielone_indyk_fit', 'szynka_z_indyka_fit'],
-  },
-  {
-    id: 'wieprzowina',
-    name: 'Wieprzowina',
-    icon: Beef,
-    productIds: ['mieso_mielone_lopatka_promo', 'szynka_konserwowa_promo'],
-  },
-  {
-    id: 'ryby',
-    name: 'Ryby',
-    icon: Fish,
-    productIds: [
-      'tunczyk_w_sosie_wlasnym_fit',
-      'losos_wedzony_marinero_fit',
-      'makrela_wedzona_promo',
-    ],
-  },
-  {
-    id: 'pieczywo',
-    name: 'Pieczywo',
-    icon: Croissant,
-    productIds: [
-      'chleb_zytni_fit',
-      'bulki_kajzerki_promo',
-      'chleb_proteinowy_fit',
-      'tortilla_pszenna_promo',
-      'wafle_ryzowe_bg_fit',
-      'chleb_bezglutenowy_fit',
-    ],
-  },
-  {
-    id: 'tofu',
-    name: 'Tofu / Hummus',
-    icon: Leaf,
-    productIds: [
-      'tofu_wedzone_govege_fit',
-      'tofu_naturalne_govege_fit',
-      'hummus_klasyczny_govege',
-    ],
-  },
-  {
-    id: 'banany',
-    name: 'Banany',
-    icon: Apple,
-    productIds: ['banany_promo'],
-  },
-  {
-    id: 'jablka',
-    name: 'Jabłka',
-    icon: Apple,
-    productIds: ['jablka_polskie_promo'],
-  },
-  {
-    id: 'borowki',
-    name: 'Borówki',
-    icon: Apple,
-    productIds: ['borowki_fit'],
-  },
-  {
-    id: 'awokado',
-    name: 'Awokado',
-    icon: Apple,
-    productIds: ['awokado_hass_fit'],
-  },
-];
+export { EXCLUSION_GROUPS };
 
 export const CALORIE_PRESETS = [
   {
@@ -268,9 +100,6 @@ function RollerPicker({
   };
 
   const handleTouchMove = (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
     const currentY = e.touches[0].clientY;
     const diff = touchStartY.current - currentY;
     if (diff > 30) {
@@ -388,7 +217,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
   const [peopleCount, setPeopleCount] = useState(initialValues?.peopleCount || 2);
   const [daysCount, setDaysCount] = useState(initialValues?.daysCount || 3);
-  const [budgetPln, setBudgetPln] = useState(initialValues?.budgetPln || 140);
+  const [budgetPln, setBudgetPln] = useState(
+    initialValues?.budgetPln || (initialValues?.peopleCount || 2) * (initialValues?.daysCount || 3) * 36
+  );
   const [dietType, setDietType] = useState(initialValues?.dietType || 'nie_vege');
   const [targetCalories, setTargetCalories] = useState(
     initialValues?.targetCalories !== undefined ? initialValues.targetCalories : 2000
@@ -413,8 +244,10 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   }, [searchQuery]);
 
   const selectedGroups = useMemo(() => {
-    return EXCLUSION_GROUPS.filter((g) =>
-      g.productIds.some((pid) => excludedProductIds.includes(pid))
+    return EXCLUSION_GROUPS.filter(
+      (g) =>
+        excludedProductIds.includes(g.id) ||
+        g.productIds.some((pid) => excludedProductIds.includes(pid))
     );
   }, [excludedProductIds]);
 
@@ -423,16 +256,17 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   );
 
   const handleToggleGroup = (group) => {
-    const isAllExcluded = group.productIds.every((pid) =>
-      excludedProductIds.includes(pid)
-    );
+    const isAllExcluded =
+      excludedProductIds.includes(group.id) ||
+      group.productIds.every((pid) => excludedProductIds.includes(pid));
     if (isAllExcluded) {
       setExcludedProductIds((prev) =>
-        prev.filter((pid) => !group.productIds.includes(pid))
+        prev.filter((pid) => !group.productIds.includes(pid) && pid !== group.id)
       );
     } else {
       setExcludedProductIds((prev) => [
         ...prev,
+        group.id,
         ...group.productIds.filter((pid) => !prev.includes(pid)),
       ]);
     }
@@ -498,7 +332,10 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
             <RollerPicker
               label="Liczba osób:"
               value={peopleCount}
-              onChange={setPeopleCount}
+              onChange={(p) => {
+                setPeopleCount(p);
+                setBudgetPln(Math.round(daysCount * p * 36));
+              }}
               min={1}
               max={6}
             />
@@ -517,7 +354,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               value={daysCount}
               onChange={(d) => {
                 setDaysCount(d);
-                setBudgetPln(Math.round(d * peopleCount * 22));
+                setBudgetPln(Math.round(d * peopleCount * 36));
               }}
               min={1}
               max={7}
@@ -542,14 +379,14 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               </div>
 
               <p className="text-xs font-semibold text-neutral-600 mb-4">
-                To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę
+                To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę (~{Number((dailyPerPerson / 4).toFixed(2))} zł za posiłek)
               </p>
 
               <input
                 type="range"
-                min={Math.max(25, peopleCount * daysCount * 12)}
-                max={Math.max(200, peopleCount * daysCount * 55)}
-                step={5}
+                min={Math.max(50, peopleCount * daysCount * 25)}
+                max={Math.max(200, peopleCount * daysCount * 60)}
+                step={peopleCount * daysCount > 8 ? 10 : 5}
                 value={budgetPln}
                 onChange={(e) => setBudgetPln(Number(e.target.value))}
                 className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
@@ -559,15 +396,18 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 {[
                   {
                     label: 'Oszczędny',
-                    multiplier: 16,
+                    multiplier: 28,
+                    hint: '~7 zł / posiłek',
                   },
                   {
                     label: 'Optymalny',
-                    multiplier: 23,
+                    multiplier: 36,
+                    hint: '~9 zł / posiłek',
                   },
                   {
                     label: 'Swobodny',
-                    multiplier: 32,
+                    multiplier: 48,
+                    hint: '~12 zł / posiłek',
                   },
                 ].map((preset) => {
                   const val = Math.round(peopleCount * daysCount * preset.multiplier);
@@ -585,6 +425,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     >
                       <p className="text-xs font-extrabold truncate">{preset.label}</p>
                       <p className="text-xs sm:text-sm font-black mt-0.5">{val} zł</p>
+                      <p className="text-[10px] text-neutral-500 font-medium">{preset.hint}</p>
                     </button>
                   );
                 })}
@@ -807,7 +648,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 </div>
 
                 {/* Rozwijana lista wyników po kliknięciu w wyszukiwarkę */}
-                {isSearchOpen && (
+                {(isSearchOpen || exclusionMode === 'tak') && (
                   <div className="mt-3 space-y-3 pt-3 border-t border-neutral-100">
                     {selectedGroups.length > 0 && (
                       <div>
@@ -816,17 +657,20 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {selectedGroups.map((group) => {
-                            const IconComponent = group.icon;
                             return (
                               <button
                                 key={group.id}
                                 type="button"
                                 onClick={() => handleToggleGroup(group)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs"
                               >
-                                <IconComponent className="w-3.5 h-3.5 text-red-700" />
+                                <ProductImage
+                                  productId={group.productIds[0]}
+                                  name={group.name}
+                                  className="w-4 h-4 rounded-md shrink-0"
+                                />
                                 <span>{group.name}</span>
-                                <X className="w-3 h-3 ml-0.5" />
+                                <X className="w-3.5 h-3.5 ml-0.5" />
                               </button>
                             );
                           })}
@@ -834,40 +678,37 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                       </div>
                     )}
 
-                    <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1">
+                    <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
                       {filteredGroups.map((group) => {
-                        const isExcluded = group.productIds.every((pid) =>
-                          excludedProductIds.includes(pid)
-                        );
-                        const IconComponent = group.icon;
+                        const isExcluded =
+                          excludedProductIds.includes(group.id) ||
+                          group.productIds.every((pid) =>
+                            excludedProductIds.includes(pid)
+                          );
                         return (
                           <button
                             key={group.id}
                             type="button"
                             onClick={() => handleToggleGroup(group)}
-                            className={`w-full p-2 rounded-xl flex items-center justify-between text-left transition text-xs font-bold ${
+                            className={`w-full p-2.5 rounded-2xl flex items-center justify-between text-left transition text-xs font-bold ${
                               isExcluded
-                                ? 'bg-red-50 text-red-700 border border-red-300'
-                                : 'bg-neutral-50 text-neutral-800 hover:bg-neutral-100 border border-neutral-100'
+                                ? 'bg-red-50/90 text-red-700 border border-red-300 ring-1 ring-red-400'
+                                : 'bg-neutral-50/80 text-neutral-800 hover:bg-neutral-100 border border-neutral-200/80'
                             }`}
                           >
-                            <div className="flex items-center gap-2.5 truncate">
-                              <div
-                                className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                                  isExcluded
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-white border border-neutral-200 text-neutral-600'
-                                }`}
-                              >
-                                <IconComponent className="w-4 h-4" />
-                              </div>
-                              <span className="truncate">{group.name}</span>
+                            <div className="flex items-center gap-3 truncate">
+                              <ProductImage
+                                productId={group.productIds[0]}
+                                name={group.name}
+                                className="w-9 h-9 rounded-xl shrink-0"
+                              />
+                              <span className="truncate text-sm font-bold text-neutral-900">{group.name}</span>
                             </div>
                             <span
-                              className={`text-[10px] px-2 py-0.5 rounded-md shrink-0 ml-2 ${
+                              className={`text-[11px] px-2.5 py-1 rounded-lg shrink-0 ml-2 font-black transition ${
                                 isExcluded
-                                  ? 'bg-red-600 text-white font-extrabold'
-                                  : 'bg-neutral-200 text-neutral-600'
+                                  ? 'bg-red-600 text-white shadow-2xs'
+                                  : 'bg-neutral-200/80 text-neutral-700 hover:bg-neutral-300'
                               }`}
                             >
                               {isExcluded ? 'Wykluczono' : 'Wyklucz'}

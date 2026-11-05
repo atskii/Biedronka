@@ -14,6 +14,10 @@ export const DISH_IMAGES = {
     'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=640&h=360&q=80',
   sniadanie_omlet_twarog_papryka:
     'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=640&h=360&q=80',
+  sniadanie_tofucznica_cukinia_szpinak:
+    'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=640&h=360&q=80',
+  sniadanie_kanapki_hummus_ogorek:
+    'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=640&h=360&q=80',
 
   // Obiady
   obiad_kurczak_pieczone_ziemniaki_brokul:
@@ -38,6 +42,8 @@ export const DISH_IMAGES = {
     'https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=640&h=360&q=80',
   kolacja_serek_wiejski_pomidory_chleb:
     'https://images.unsplash.com/photo-1586511925558-a4c6376fe65f?auto=format&fit=crop&w=640&h=360&q=80',
+  kolacja_wrap_hummus_warzywa_fit:
+    'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&h=360&q=80',
 
   // Przekąski
   przekaska_skyr_jablko_wafle:

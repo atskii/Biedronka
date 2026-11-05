@@ -32,7 +32,6 @@ export function formatDuration(seconds) {
  *   5. Mięso
  *   6. Ryby
  *   7. Napoje
- *   8. Napoje alkoholowe
  * - Zastąpienie emotek wektorowymi ikonami kategorii i produktów
  * - Przycisk "Brak produktu" otwierający dostępne "Alternatywy"
  * - Pasek postępu na dole wraz z przyciskiem skanowania karty Moja Biedronka

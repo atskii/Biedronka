@@ -62,6 +62,11 @@ export default function MealPlanView({
             <p className="text-xl sm:text-2xl font-black text-amber-300 leading-tight mt-0.5 whitespace-nowrap">
               {plan.totalCostPln.toFixed(2)} zł
             </p>
+            {plan.budgetPln && (
+              <span className="text-[10px] font-bold text-amber-200/90 block mt-0.5 truncate">
+                Budżet: {plan.budgetPln} zł
+              </span>
+            )}
           </div>
 
           <div className="bg-black/20 rounded-2xl p-3 border border-white/10">

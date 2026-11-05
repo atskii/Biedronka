@@ -1,4 +1,38 @@
-import { PRODUCTS, RECIPES, STORE_AISLES, MEAL_TYPES } from '../data/biedronkaCatalog.js';
+import { PRODUCTS, RECIPES, STORE_AISLES, MEAL_TYPES, EXCLUSION_GROUPS } from '../data/biedronkaCatalog.js';
+
+/**
+ * Rozwija listę wykluczonych identyfikatorów (grupy np. 'pomidor' oraz konkretne produkty),
+ * gwarantując, że żaden powiązany produkt ani składnik o tej samej nazwie nie trafi do jadłospisu ani na listę zakupów.
+ */
+export function expandExcludedProductIds(excludedProductIds = []) {
+  if (!excludedProductIds || excludedProductIds.length === 0) return [];
+  const set = new Set(excludedProductIds);
+
+  // 1. Rozwiń identyfikatory grup wykluczeń (np. 'pomidor' -> wszystkie odmiany pomidorów z gazetki i oferty)
+  if (Array.isArray(EXCLUSION_GROUPS)) {
+    EXCLUSION_GROUPS.forEach((group) => {
+      if (set.has(group.id) || group.productIds.some((pid) => set.has(pid))) {
+        set.add(group.id);
+        group.productIds.forEach((pid) => set.add(pid));
+      }
+    });
+  }
+
+  // 2. Automatyczne dopasowanie po nazwie i identyfikatorze w katalogu PRODUCTS
+  Object.values(PRODUCTS).forEach((product) => {
+    for (const exId of Array.from(set)) {
+      const cleanEx = exId.toLowerCase().replace(/_/g, ' ');
+      if (
+        product.id.toLowerCase().includes(exId.toLowerCase()) ||
+        product.name.toLowerCase().includes(cleanEx)
+      ) {
+        set.add(product.id);
+      }
+    }
+  });
+
+  return Array.from(set);
+}
 
 /**
  * Oblicza cenę, kalorie oraz makroskładniki dla pojedynczego składnika w potrawie.
@@ -131,7 +165,8 @@ export function getIngredientSubstitutesForDish(
   if (!currentProduct) return [];
 
   const currentMetrics = calculateIngredientMetrics(currentProductId, portionGrams, peopleCount);
-  const excludedSet = new Set(excludedProductIds);
+  const allExcluded = expandExcludedProductIds(excludedProductIds);
+  const excludedSet = new Set(allExcluded);
 
   // Zbierz dedykowane zamienniki kulinarne oraz alternatywy
   const candidateIds = new Set([
@@ -191,7 +226,8 @@ export function getShelfAlternativesForProduct(productId, dietType = 'nie_vege',
   const product = PRODUCTS[productId];
   if (!product) return [];
 
-  const excludedSet = new Set(excludedProductIds);
+  const allExcluded = expandExcludedProductIds(excludedProductIds);
+  const excludedSet = new Set(allExcluded);
   const candidateIds = new Set([
     ...(product.alternatives || []),
     ...(product.substitutes || []),
@@ -318,7 +354,12 @@ export function generateMealPlan({
   targetCalories = 2000,
   excludedProductIds = [],
 }) {
-  const excludedSet = new Set(excludedProductIds);
+  const allExcludedIds = expandExcludedProductIds(excludedProductIds);
+  const excludedSet = new Set(allExcludedIds);
+
+  const recipeHasExcludedIngredient = (recipe) => {
+    return recipe.ingredients.some((ing) => excludedSet.has(ing.productId));
+  };
 
   // Pomocnicza funkcja podmieniająca wykluczone składniki w przepisie
   const sanitizeRecipeIngredients = (recipe) => {
@@ -338,7 +379,7 @@ export function generateMealPlan({
         ing.portionGrams,
         peopleCount,
         dietType,
-        excludedProductIds
+        allExcludedIds
       );
       if (subs.length > 0) {
         return {
@@ -365,46 +406,76 @@ export function generateMealPlan({
         matchingRecipes = RECIPES.filter((r) => r.mealType === mealSlot.id);
       }
 
-      // Preferuj przepisy bez wykluczonych składników
+      // ZAWSZE preferuj przepisy w 100% wolne od wykluczonych składników
       const cleanRecipes = matchingRecipes.filter(
-        (r) => !r.ingredients.some((i) => excludedSet.has(i.productId))
+        (r) => !recipeHasExcludedIngredient(r)
       );
 
       const pool = cleanRecipes.length > 0 ? cleanRecipes : matchingRecipes;
 
-      // Dobierz przepis pod kątem docelowego bilansu kalorii na dany posiłek
-      let chosenRecipe;
-      if (typeof targetCalories === 'number' && targetCalories > 0) {
-        const slotRatios = {
-          sniadanie: 0.25,
-          obiad: 0.35,
-          kolacja: 0.25,
-          przekaska: 0.15,
+      const dailyBudget = budgetPln / Math.max(1, daysCount);
+      const slotBudgetRatios = {
+        sniadanie: 0.22,
+        obiad: 0.40,
+        kolacja: 0.24,
+        przekaska: 0.14,
+      };
+      const slotBudget = dailyBudget * (slotBudgetRatios[mealSlot.id] || 0.25);
+      const slotTargetKcal =
+        typeof targetCalories === 'number' && targetCalories > 0
+          ? targetCalories * (slotBudgetRatios[mealSlot.id] || 0.25)
+          : null;
+
+      // Oceń kandydatów pod kątem budżetu posiłku i celu kalorycznego
+      const evaluatedCandidates = pool.map((candidateRecipe) => {
+        const sanitized = sanitizeRecipeIngredients(candidateRecipe);
+        let forMetrics = candidateRecipe;
+        if (recipeHasExcludedIngredient(candidateRecipe)) {
+          let cleanTitle = candidateRecipe.title
+            .replace(/ z pomidorami.*?(i\b|$)/gi, ' $1')
+            .replace(/ z pomidorkami.*?(i\b|$)/gi, ' $1')
+            .replace(/ i pomidorami.*?(i\b|$)/gi, ' $1')
+            .replace(/ i pomidorkami.*?(i\b|$)/gi, ' $1')
+            .replace(/, pomidorkami/gi, '')
+            .replace(/, pomidorami/gi, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+          forMetrics = { ...candidateRecipe, title: cleanTitle };
+        }
+        const metrics = calculateDishMetrics(forMetrics, sanitized, peopleCount);
+        return {
+          recipe: candidateRecipe,
+          dishMetrics: metrics,
+          cost: metrics.totalGroupPrice,
+          kcal: metrics.kcal,
         };
-        const targetSlotKcal = targetCalories * (slotRatios[mealSlot.id] || 0.25);
+      });
 
-        const sortedByKcal = [...pool].sort((a, b) => {
-          const estA = a.ingredients.reduce((acc, ing) => {
-            const p = PRODUCTS[ing.productId];
-            return acc + (p ? (p.kcalPer100g * ing.portionGrams) / 100 : 0);
-          }, 0);
-          const estB = b.ingredients.reduce((acc, ing) => {
-            const p = PRODUCTS[ing.productId];
-            return acc + (p ? (p.kcalPer100g * ing.portionGrams) / 100 : 0);
-          }, 0);
-          return Math.abs(estA - targetSlotKcal) - Math.abs(estB - targetSlotKcal);
-        });
+      // Sortuj: priorytet mają dania mieszczące się w budżecie danego slotu
+      evaluatedCandidates.sort((a, b) => {
+        const fitsA = a.cost <= slotBudget * 1.08;
+        const fitsB = b.cost <= slotBudget * 1.08;
+        if (fitsA && !fitsB) return -1;
+        if (!fitsA && fitsB) return 1;
 
-        chosenRecipe = sortedByKcal[(d + sortedByKcal.length) % sortedByKcal.length];
-      } else {
-        chosenRecipe = pool[(d + pool.length) % pool.length];
-      }
+        if (fitsA && fitsB) {
+          if (slotTargetKcal !== null) {
+            return Math.abs(a.kcal - slotTargetKcal) - Math.abs(b.kcal - slotTargetKcal);
+          }
+          return Math.abs(a.cost - slotBudget) - Math.abs(b.cost - slotBudget);
+        }
 
-      const sanitizedIngredients = sanitizeRecipeIngredients(chosenRecipe);
-      const dish = calculateDishMetrics(chosenRecipe, sanitizedIngredients, peopleCount);
+        // Gdy żaden nie mieści się w budżecie: wybierz najtańsze
+        return a.cost - b.cost;
+      });
+
+      const topCandidates = evaluatedCandidates.slice(0, 2);
+      const chosen =
+        topCandidates[(d + mealSlot.sortOrder) % topCandidates.length] ||
+        evaluatedCandidates[0];
 
       return {
-        ...dish,
+        ...chosen.dishMetrics,
         slotId: mealSlot.id,
         slotLabel: mealSlot.label,
         slotEmoji: mealSlot.emoji,
@@ -418,17 +489,57 @@ export function generateMealPlan({
     });
   }
 
+  // Gwarancja braku przekroczenia budżetu: jeśli łączny koszt przewyższa limit, podmień najdroższe dania na tańsze
+  let currentTotalCost = days.reduce(
+    (sum, day) => sum + day.meals.reduce((mSum, m) => mSum + m.totalGroupPrice, 0),
+    0
+  );
+
+  if (currentTotalCost > budgetPln) {
+    for (let day of days) {
+      for (let mIdx = 0; mIdx < day.meals.length; mIdx++) {
+        if (currentTotalCost <= budgetPln) break;
+        const currentMeal = day.meals[mIdx];
+        const slot = currentMeal.slotId;
+        const matchingClean = RECIPES.filter(
+          (r) =>
+            r.mealType === slot &&
+            (dietType === 'nie_vege' || r.dietTags.includes(dietType)) &&
+            !recipeHasExcludedIngredient(r)
+        );
+
+        const cheaperOptions = matchingClean
+          .map((r) => {
+            const san = sanitizeRecipeIngredients(r);
+            return calculateDishMetrics(r, san, peopleCount);
+          })
+          .filter((opt) => opt.totalGroupPrice < currentMeal.totalGroupPrice)
+          .sort((a, b) => a.totalGroupPrice - b.totalGroupPrice);
+
+        if (cheaperOptions.length > 0) {
+          const replacement = cheaperOptions[0];
+          currentTotalCost -= currentMeal.totalGroupPrice - replacement.totalGroupPrice;
+          day.meals[mIdx] = {
+            ...replacement,
+            slotId: currentMeal.slotId,
+            slotLabel: currentMeal.slotLabel,
+            slotEmoji: currentMeal.slotEmoji,
+          };
+        }
+      }
+    }
+  }
+
   let initialPlan = recalculatePlanTotals({
     peopleCount,
     daysCount,
     budgetPln,
     dietType,
     targetCalories,
-    excludedProductIds,
+    excludedProductIds: allExcludedIds,
     days,
   });
 
-  // Zwróć wygenerowany plan z autentycznymi składnikami dopasowanymi do potraw
   return initialPlan;
 }
 
@@ -499,7 +610,6 @@ export function replaceIngredientInMealPlan(
  * 5. Mięso
  * 6. Ryby
  * 7. Napoje
- * 8. Napoje alkoholowe
  */
 export function buildShoppingListFromPlan(
   plan,

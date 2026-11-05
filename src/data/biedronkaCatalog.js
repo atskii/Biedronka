@@ -1,6 +1,6 @@
 /**
  * Katalog działów sklepowych Biedronki w dokładnej kolejności ścieżki zakupowej klienta.
- * Pierwsze zawsze Owoce i warzywa, następnie Pieczywo, Nabiał, Wędliny, Mięso, Ryby, Napoje, Napoje alkoholowe.
+ * Pierwsze zawsze Owoce i warzywa, następnie Pieczywo, Nabiał, Wędliny, Mięso, Ryby, Napoje.
  */
 export const STORE_AISLES = [
   {
@@ -59,14 +59,6 @@ export const STORE_AISLES = [
     emoji: '🧃',
     accentColor: 'orange',
   },
-  {
-    id: 'alkohole',
-    order: 8,
-    name: 'Napoje alkoholowe',
-    subtitle: 'Strefa piw, win oraz wariantów 0,0%',
-    emoji: '🍺',
-    accentColor: 'yellow',
-  },
 ];
 
 export const DIET_OPTIONS = [
@@ -105,6 +97,156 @@ export const MEAL_TYPES = [
   { id: 'obiad', label: 'Obiad', emoji: '🍲', timeHint: '14:00' },
   { id: 'kolacja', label: 'Kolacja', emoji: '🌙', timeHint: '19:30' },
   { id: 'przekaska', label: 'Przekąska', emoji: '🍎', timeHint: '11:30 / 17:00' },
+];
+
+/**
+ * Grupy wykluczeń produktów spożywczych (do ankiety i mechanizmu filtracji składników).
+ */
+export const EXCLUSION_GROUPS = [
+  {
+    id: 'pomidor',
+    name: 'Pomidor',
+    productIds: ['pomidory_malinowe', 'pomidory_koktajlowe_promo', 'pomidory_rzymskie'],
+  },
+  {
+    id: 'ogorek',
+    name: 'Ogórek',
+    productIds: ['ogorek_zielony_fit'],
+  },
+  {
+    id: 'papryka',
+    name: 'Papryka',
+    productIds: ['papryka_czerwona_fit'],
+  },
+  {
+    id: 'brokul',
+    name: 'Brokuł',
+    productIds: ['brokul_swiezy'],
+  },
+  {
+    id: 'cukinia',
+    name: 'Cukinia',
+    productIds: ['cukinia_zielona_promo'],
+  },
+  {
+    id: 'szpinak',
+    name: 'Szpinak',
+    productIds: ['szpinak_baby_fit'],
+  },
+  {
+    id: 'salata',
+    name: 'Sałata',
+    productIds: ['mix_salat_fit'],
+  },
+  {
+    id: 'pieczarki',
+    name: 'Pieczarki',
+    productIds: ['pieczarki_swieze'],
+  },
+  {
+    id: 'ziemniaki',
+    name: 'Ziemniaki',
+    productIds: ['ziemniaki_mlode_promo', 'bataty_fit'],
+  },
+  {
+    id: 'mleko',
+    name: 'Mleko',
+    productIds: ['mleko_bez_laktozy_promo', 'napoj_owsiany_govege_fit'],
+  },
+  {
+    id: 'twarog',
+    name: 'Twaróg',
+    productIds: ['twarog_chudy_fit'],
+  },
+  {
+    id: 'jogurt_skyr',
+    name: 'Jogurt / Skyr',
+    productIds: [
+      'skyr_naturalny_fit',
+      'jogurt_grecki_promo',
+      'jogurt_kokosowy_govege_fit',
+      'serek_wiejski_lekki_fit',
+    ],
+  },
+  {
+    id: 'ser',
+    name: 'Ser żółty / Mozzarella',
+    productIds: ['ser_gouda_promo', 'mozzarella_light_fit'],
+  },
+  {
+    id: 'jajka',
+    name: 'Jajka',
+    productIds: ['jajka_wiejskie_promo'],
+  },
+  {
+    id: 'kurczak',
+    name: 'Kurczak',
+    productIds: [
+      'filet_z_kurczaka_promo',
+      'polędwiczki_z_kurczaka_fit',
+      'kabanosy_drobiowe_promo',
+    ],
+  },
+  {
+    id: 'indyk',
+    name: 'Indyk',
+    productIds: ['mieso_mielone_indyk_fit', 'szynka_z_indyka_fit'],
+  },
+  {
+    id: 'wieprzowina',
+    name: 'Wieprzowina',
+    productIds: ['mieso_mielone_lopatka_promo', 'szynka_konserwowa_promo'],
+  },
+  {
+    id: 'ryby',
+    name: 'Ryby',
+    productIds: [
+      'tunczyk_w_sosie_wlasnym_fit',
+      'losos_wedzony_marinero_fit',
+      'makrela_wedzona_promo',
+    ],
+  },
+  {
+    id: 'pieczywo',
+    name: 'Pieczywo',
+    productIds: [
+      'chleb_zytni_fit',
+      'bulki_kajzerki_promo',
+      'chleb_proteinowy_fit',
+      'tortilla_pszenna_promo',
+      'wafle_ryzowe_bg_fit',
+      'chleb_bezglutenowy_fit',
+    ],
+  },
+  {
+    id: 'tofu',
+    name: 'Tofu / Hummus',
+    productIds: [
+      'tofu_wedzone_govege_fit',
+      'tofu_naturalne_govege_fit',
+      'hummus_klasyczny_govege',
+    ],
+  },
+  {
+    id: 'banany',
+    name: 'Banany',
+    productIds: ['banany_promo'],
+  },
+  {
+    id: 'jablka',
+    name: 'Jabłka',
+    productIds: ['jablka_polskie_promo'],
+  },
+  {
+    id: 'borowki',
+    name: 'Borówki',
+    productIds: ['borowki_fit'],
+  },
+  {
+    id: 'awokado',
+    name: 'Awokado',
+    productIds: ['awokado_hass_fit'],
+  },
 ];
 
 /**
@@ -1207,54 +1349,6 @@ export const PRODUCTS = {
     substitutes: ['woda_polaris_promo', 'napoj_owsiany_govege_fit'],
     alternatives: ['woda_polaris_promo', 'napoj_owsiany_govege_fit'],
   },
-
-  // ==================== 8. NAPOJE ALKOHOLOWE ====================
-  piwo_zero_karmi_fit: {
-    id: 'piwo_zero_karmi_fit',
-    name: 'Piwo bezalkoholowe 0,0% Orzeźwiający Cytrus',
-    brand: 'Strefa 0,0% Biedronka',
-    aisleCategory: 'alkohole',
-    aisleOrder: 8,
-    priceRegular: 3.99,
-    pricePromo: 3.49,
-    isGazetkaPromo: false,
-    promoLabel: null,
-    isFitChoice: true,
-    fitBadge: '0.0% ALKOHOLU',
-    kcalPer100g: 26,
-    carbs: 5.8,
-    protein: 0.3,
-    fat: 0.0,
-    packageWeightG: 500,
-    unitLabel: 'puszka 500 ml',
-    dietTags: ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'],
-    emoji: '🍺',
-    substitutes: ['piwo_klasyczne_jasne_promo', 'woda_polaris_promo'],
-    alternatives: ['piwo_klasyczne_jasne_promo', 'woda_polaris_promo', 'sok_pomaranczowy_riviva_promo'],
-  },
-  piwo_klasyczne_jasne_promo: {
-    id: 'piwo_klasyczne_jasne_promo',
-    name: 'Piwo jasne pełne z oferty promocyjnej',
-    brand: 'Strefa Promocji Biedronka',
-    aisleCategory: 'alkohole',
-    aisleOrder: 8,
-    priceRegular: 3.79,
-    pricePromo: 3.29,
-    isGazetkaPromo: false,
-    promoLabel: null,
-    isFitChoice: false,
-    fitBadge: null,
-    kcalPer100g: 43,
-    carbs: 3.6,
-    protein: 0.5,
-    fat: 0.0,
-    packageWeightG: 500,
-    unitLabel: 'puszka 500 ml',
-    dietTags: ['nie_vege', 'vege', 'bez_laktozy'],
-    emoji: '🍻',
-    substitutes: ['piwo_zero_karmi_fit', 'woda_polaris_promo'],
-    alternatives: ['piwo_zero_karmi_fit', 'woda_polaris_promo'],
-  },
 };
 
 /**
@@ -1344,6 +1438,38 @@ export const RECIPES = [
       { productId: 'twarog_chudy_fit', portionGrams: 100, displayAmount: '100 g' },
       { productId: 'papryka_czerwona_fit', portionGrams: 100, displayAmount: '1/2 papryki' },
       { productId: 'szpinak_baby_fit', portionGrams: 40, displayAmount: 'garść' },
+    ],
+  },
+  {
+    id: 'sniadanie_tofucznica_cukinia_szpinak',
+    title: 'Szybka tofucznica z cukinią, szpinakiem i pieczywem bezglutenowym',
+    mealType: 'sniadanie',
+    prepTimeMinutes: 12,
+    prepTimeLabel: '12m',
+    dietTags: ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'],
+    emoji: '🍳',
+    description: 'Roślinna tofucznica z młodą cukinią i świeżym szpinakiem na ciepło bez pomidorów.',
+    ingredients: [
+      { productId: 'tofu_wedzone_govege_fit', portionGrams: 140, displayAmount: '3/4 kostki' },
+      { productId: 'cukinia_zielona_promo', portionGrams: 100, displayAmount: '1/3 cukinii' },
+      { productId: 'szpinak_baby_fit', portionGrams: 40, displayAmount: 'garść' },
+      { productId: 'chleb_bezglutenowy_fit', portionGrams: 80, displayAmount: '2 kromki' },
+    ],
+  },
+  {
+    id: 'sniadanie_kanapki_hummus_ogorek',
+    title: 'Pożywne kanapki z kremowym hummusem GoVege i zielonym ogórkiem',
+    mealType: 'sniadanie',
+    prepTimeMinutes: 8,
+    prepTimeLabel: '8m',
+    dietTags: ['nie_vege', 'vege', 'bez_laktozy'],
+    emoji: '🥪',
+    description: 'Lekkie śniadanie na chlebie żytnim z aksamitnym hummusem i świeżym ogórkiem bez dodatku pomidora.',
+    ingredients: [
+      { productId: 'chleb_zytni_fit', portionGrams: 100, displayAmount: '2 kromki' },
+      { productId: 'hummus_klasyczny_govege', portionGrams: 80, displayAmount: '1/2 opak.' },
+      { productId: 'ogorek_zielony_fit', portionGrams: 100, displayAmount: '1/3 ogórka' },
+      { productId: 'papryka_czerwona_fit', portionGrams: 60, displayAmount: '1/3 papryki' },
     ],
   },
 
@@ -1510,6 +1636,22 @@ export const RECIPES = [
       { productId: 'ogorek_zielony_fit', portionGrams: 100, displayAmount: '1/3 szt.' },
     ],
   },
+  {
+    id: 'kolacja_wrap_hummus_warzywa_fit',
+    title: 'Chrupiący wrap z hummusem GoVege, cukinią i mixem sałat',
+    mealType: 'kolacja',
+    prepTimeMinutes: 10,
+    prepTimeLabel: '10m',
+    dietTags: ['nie_vege', 'vege', 'bez_laktozy'],
+    emoji: '🌯',
+    description: 'Złocista tortilla z hummusem, grillowaną cukinią i świeżym mixem sałat bez pomidorów.',
+    ingredients: [
+      { productId: 'tortilla_pszenna_promo', portionGrams: 120, displayAmount: '2 placki' },
+      { productId: 'hummus_klasyczny_govege', portionGrams: 80, displayAmount: '1/2 opak.' },
+      { productId: 'cukinia_zielona_promo', portionGrams: 100, displayAmount: 'kilka plastrów' },
+      { productId: 'mix_salat_fit', portionGrams: 50, displayAmount: 'duża garść' },
+    ],
+  },
 
   // ==================== PRZEKĄSKI ====================
   {
@@ -1546,18 +1688,18 @@ export const RECIPES = [
   },
   {
     id: 'przekaska_hummus_warzywne_slupki',
-    title: 'Chrupiące słupki z papryki i ogórka z hummusem i piwem 0,0%',
+    title: 'Chrupiące słupki z papryki i ogórka z hummusem i waflami ryżowymi',
     mealType: 'przekaska',
     prepTimeMinutes: 10,
     prepTimeLabel: '10m',
     dietTags: ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'],
     emoji: '🫑',
-    description: 'Wytrawna przekąska ze świeżych warzyw z dodatkiem orzeźwiającego napoju 0,0%.',
+    description: 'Wytrawna przekąska ze świeżych warzyw z aksamitnym hummusem i chrupiącymi waflami ryżowymi.',
     ingredients: [
       { productId: 'hummus_klasyczny_govege', portionGrams: 80, displayAmount: '1/2 kubka' },
       { productId: 'papryka_czerwona_fit', portionGrams: 120, displayAmount: '1 papryka' },
       { productId: 'ogorek_zielony_fit', portionGrams: 150, displayAmount: '1/2 ogórka' },
-      { productId: 'piwo_zero_karmi_fit', portionGrams: 500, displayAmount: '1 puszka 0,0%' },
+      { productId: 'wafle_ryzowe_bg_fit', portionGrams: 40, displayAmount: '4 wafle' },
     ],
   },
   {

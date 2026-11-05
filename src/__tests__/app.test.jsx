@@ -34,6 +34,76 @@ describe('Silnik Jadłospisu i Listy Zakupów Moja Biedronka', () => {
     });
   });
 
+  it('skutecznie wyklucza pomidory i wszelkie produkty pochodne z jadłospisu, zamienników oraz listy zakupów', () => {
+    const plan = generateMealPlan({
+      peopleCount: 2,
+      daysCount: 3,
+      budgetPln: 140,
+      dietType: 'nie_vege',
+      targetCalories: 2000,
+      excludedProductIds: ['pomidor'],
+    });
+
+    const tomatoKeywords = ['pomidor', 'pomidory', 'pomidorki'];
+    const tomatoProductIds = ['pomidory_malinowe', 'pomidory_koktajlowe_promo', 'pomidory_rzymskie'];
+
+    // 1. Sprawdź, czy żaden posiłek i żaden składnik nie zawiera pomidorów
+    plan.days.forEach((day) => {
+      day.meals.forEach((meal) => {
+        meal.ingredients.forEach((ing) => {
+          expect(tomatoProductIds).not.toContain(ing.productId);
+        });
+        const titleLower = meal.title.toLowerCase();
+        tomatoKeywords.forEach((kw) => {
+          expect(titleLower).not.toContain(kw);
+        });
+      });
+    });
+
+    // 2. Sprawdź listę zakupów
+    const shoppingList = buildShoppingListFromPlan(plan);
+    shoppingList.sections.forEach((sec) => {
+      sec.items.forEach((item) => {
+        expect(tomatoProductIds).not.toContain(item.product.id);
+        const nameLower = item.product.name.toLowerCase();
+        expect(nameLower).not.toContain('pomidor');
+      });
+    });
+
+    // 3. Sprawdź zamienniki składników
+    const subs = getIngredientSubstitutesForDish(
+      'papryka_czerwona_fit',
+      100,
+      2,
+      'nie_vege',
+      ['pomidor']
+    );
+    subs.forEach((sub) => {
+      expect(tomatoProductIds).not.toContain(sub.product.id);
+    });
+  });
+
+  it('nigdy nie generuje planu droższego niż wybrany budżet i przestrzega limitu cenowego', () => {
+    const testCases = [
+      { people: 2, days: 3, budget: 168 },
+      { people: 2, days: 3, budget: 216 },
+      { people: 6, days: 3, budget: 504 },
+      { people: 6, days: 3, budget: 648 },
+    ];
+
+    testCases.forEach(({ people, days, budget }) => {
+      const plan = generateMealPlan({
+        peopleCount: people,
+        daysCount: days,
+        budgetPln: budget,
+        dietType: 'nie_vege',
+        targetCalories: 2000,
+      });
+
+      expect(plan.totalCostPln).toBeLessThanOrEqual(budget);
+    });
+  });
+
   it('zwraca zamienniki (produkty z gazetki żółte oraz produkty Fit) dla kwadratu składnika i przelicza cenę oraz makro', () => {
     const plan = generateMealPlan({
       peopleCount: 2,

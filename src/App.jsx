@@ -20,7 +20,7 @@ export default function App() {
   const [surveyParams, setSurveyParams] = useState({
     peopleCount: 2,
     daysCount: 3,
-    budgetPln: 140,
+    budgetPln: 216,
     dietType: 'nie_vege',
     targetCalories: 2000,
     excludedProductIds: [],
@@ -30,7 +30,7 @@ export default function App() {
     generateMealPlan({
       peopleCount: 2,
       daysCount: 3,
-      budgetPln: 140,
+      budgetPln: 216,
       dietType: 'nie_vege',
       targetCalories: 2000,
       excludedProductIds: [],
