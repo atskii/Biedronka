@@ -121,7 +121,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Krok 1: Na ile osób? - roller wyboru (1-6)
     expect(
-      screen.getByText(/1\) Na ile osób przygotować plan\?/i)
+      screen.getByText(/1\.\s*Na ile osób przygotować plan\?/i)
     ).toBeInTheDocument();
     const roller = screen.getByRole('spinbutton');
     expect(roller).toBeInTheDocument();
@@ -135,7 +135,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Krok 2: Ile dni? - roller wyboru (1-7)
     expect(
-      screen.getByText(/2\) Na ile dni chcesz zaplanować posiłki\?/i)
+      screen.getByText(/2\.\s*Na ile dni chcesz zaplanować posiłki\?/i)
     ).toBeInTheDocument();
     expect(
       screen.queryByText(/Na każdy dzień znajdziemy dla Ciebie 4 posiłki/i)
@@ -153,7 +153,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Krok 3: Jaki budżet?
     expect(
-      screen.getByText(/3\) Jaki budżet chcesz przeznaczyć\?/i)
+      screen.getByText(/3\.\s*Jaki budżet chcesz przeznaczyć\?/i)
     ).toBeInTheDocument();
     expect(
       screen.queryByText(/Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki/i)
@@ -168,7 +168,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Krok 4: Jaka dieta?
     expect(
-      screen.getByText(/4\) Jaka dieta Cię interesuje\?/i)
+      screen.getByText(/4\.\s*Jaka dieta Cię interesuje\?/i)
     ).toBeInTheDocument();
     expect(screen.getByText('Klasyczna')).toBeInTheDocument();
     expect(screen.getByText('Wegetariańska')).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Krok 5: Czy chcesz wykluczyć jakieś produkty? -> Sprawdź kafelki i kliknij Stwórz plan
     expect(
-      screen.getByText(/5\) Czy chcesz wykluczyć jakieś produkty\?/i)
+      screen.getByText(/5\.\s*Czy chcesz wykluczyć jakieś produkty\?/i)
     ).toBeInTheDocument();
     expect(
       screen.queryByText(/Jeśli chcesz wykluczyć dane składniki w swoich posiłkach, zaznacz je tutaj\./i)

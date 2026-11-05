@@ -433,7 +433,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {step === 1 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              1) Na ile osób przygotować plan?
+              1. Na ile osób przygotować plan?
             </h1>
 
             <RollerPicker
@@ -450,7 +450,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {step === 2 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              2) Na ile dni chcesz zaplanować posiłki?
+              2. Na ile dni chcesz zaplanować posiłki?
             </h1>
 
             <RollerPicker
@@ -470,7 +470,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {step === 3 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              3) Jaki budżet chcesz przeznaczyć?
+              3. Jaki budżet chcesz przeznaczyć?
             </h1>
 
             <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
@@ -538,7 +538,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {step === 4 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              4) Jaka dieta Cię interesuje?
+              4. Jaka dieta Cię interesuje?
             </h1>
 
             <div className="space-y-2.5 pt-1">
@@ -594,7 +594,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {step === 5 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              5) Czy chcesz wykluczyć jakieś produkty?
+              5. Czy chcesz wykluczyć jakieś produkty?
             </h1>
 
             <div className="space-y-3">
