@@ -72,30 +72,30 @@ export const STORE_AISLES = [
 export const DIET_OPTIONS = [
   {
     id: 'nie_vege',
-    label: 'Nie vege (Klasyczna)',
-    shortLabel: 'Nie vege',
-    description: 'Pełna dowolność: mięso, ryby, nabiał, warzywa i zboża',
+    label: 'Klasyczna',
+    shortLabel: 'Klasyczna',
+    description: null,
     emoji: '🍖',
   },
   {
     id: 'vege',
-    label: 'Wegetariańska (Vege)',
-    shortLabel: 'Vege',
-    description: 'Bez mięsa i ryb – bogata w warzywa, nabiał, tofu i strączki',
+    label: 'Wegetariańska',
+    shortLabel: 'Wegetariańska',
+    description: 'Bez mięsa',
     emoji: '🥗',
   },
   {
     id: 'bez_glutenu',
     label: 'Bez glutenu',
     shortLabel: 'Bez glutenu',
-    description: 'Wyklucza pszenicę, żyto i jęczmień – bazuje na ryżu, ziemniakach i produktach BG',
+    description: 'Wyklucza pszenicę, żyto i jęczmień',
     emoji: '🌾',
   },
   {
     id: 'bez_laktozy',
     label: 'Bez laktozy',
     shortLabel: 'Bez laktozy',
-    description: 'Nabiał bez laktozy, napoje roślinne GoVege oraz bezpieczne źródła białka',
+    description: 'Wybór produktów w wariancie bez laktozy lub roślinnych alternatyw',
     emoji: '🥛',
   },
 ];
