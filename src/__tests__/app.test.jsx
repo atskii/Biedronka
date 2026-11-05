@@ -138,8 +138,8 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
       screen.getByText(/2\) Na ile dni chcesz zaplanować posiłki\?/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Na każdy dzień znajdziemy dla Ciebie 4 posiłki: śniadanie, obiad, kolacje i przekąskę\./i)
-    ).toBeInTheDocument();
+      screen.queryByText(/Na każdy dzień znajdziemy dla Ciebie 4 posiłki/i)
+    ).not.toBeInTheDocument();
     expect(screen.getByText('Liczba dni:')).toBeInTheDocument();
     const daysRoller = screen.getByRole('spinbutton', { name: /Liczba dni/i });
     expect(daysRoller).toBeInTheDocument();
@@ -156,8 +156,8 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
       screen.getByText(/3\) Jaki budżet chcesz przeznaczyć\?/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki/i)
-    ).toBeInTheDocument();
+      screen.queryByText(/Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki/i)
+    ).not.toBeInTheDocument();
     expect(
       screen.getByText(/Całkowity budżet na 5 dni dla 4 os\./i)
     ).toBeInTheDocument();
