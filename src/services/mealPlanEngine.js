@@ -392,6 +392,10 @@ export function generateMealPlan({
   };
 
   const days = [];
+  const usedRecipeIdsBySlot = {};
+  MEAL_TYPES.forEach((m) => {
+    usedRecipeIdsBySlot[m.id] = new Set();
+  });
 
   for (let d = 0; d < daysCount; d++) {
     const dayMeals = MEAL_TYPES.map((mealSlot) => {
@@ -415,9 +419,9 @@ export function generateMealPlan({
 
       const dailyBudget = budgetPln / Math.max(1, daysCount);
       const slotBudgetRatios = {
-        sniadanie: 0.22,
-        obiad: 0.40,
-        kolacja: 0.24,
+        sniadanie: 0.25,
+        obiad: 0.38,
+        kolacja: 0.23,
         przekaska: 0.14,
       };
       const slotBudget = dailyBudget * (slotBudgetRatios[mealSlot.id] || 0.25);
@@ -451,10 +455,10 @@ export function generateMealPlan({
         };
       });
 
-      // Sortuj: priorytet mają dania mieszczące się w budżecie danego slotu
+      // Sortuj: priorytet mają dania mieszczące się w budżecie danego slotu (z zapasem elastyczności)
       evaluatedCandidates.sort((a, b) => {
-        const fitsA = a.cost <= slotBudget * 1.08;
-        const fitsB = b.cost <= slotBudget * 1.08;
+        const fitsA = a.cost <= slotBudget * 1.25;
+        const fitsB = b.cost <= slotBudget * 1.25;
         if (fitsA && !fitsB) return -1;
         if (!fitsA && fitsB) return 1;
 
@@ -462,17 +466,23 @@ export function generateMealPlan({
           if (slotTargetKcal !== null) {
             return Math.abs(a.kcal - slotTargetKcal) - Math.abs(b.kcal - slotTargetKcal);
           }
-          return Math.abs(a.cost - slotBudget) - Math.abs(b.cost - slotBudget);
+          return a.cost - b.cost;
         }
 
         // Gdy żaden nie mieści się w budżecie: wybierz najtańsze
         return a.cost - b.cost;
       });
 
-      const topCandidates = evaluatedCandidates.slice(0, 2);
-      const chosen =
-        topCandidates[(d + mealSlot.sortOrder) % topCandidates.length] ||
-        evaluatedCandidates[0];
+      // Zadbaj o pełną różnorodność: wybierz danie, które jeszcze nie wystąpiło w poprzednich dniach
+      const usedSet = usedRecipeIdsBySlot[mealSlot.id];
+      let unusedCandidates = evaluatedCandidates.filter((c) => !usedSet.has(c.recipe.id));
+      if (unusedCandidates.length === 0) {
+        usedSet.clear();
+        unusedCandidates = evaluatedCandidates;
+      }
+
+      const chosen = unusedCandidates[0] || evaluatedCandidates[d % evaluatedCandidates.length];
+      usedSet.add(chosen.recipe.id);
 
       return {
         ...chosen.dishMetrics,
@@ -489,7 +499,7 @@ export function generateMealPlan({
     });
   }
 
-  // Gwarancja braku przekroczenia budżetu: jeśli łączny koszt przewyższa limit, podmień najdroższe dania na tańsze
+  // Gwarancja braku przekroczenia budżetu: jeśli łączny koszt przewyższa limit, podmień najdroższe dania na tańsze (zachowując różnorodność)
   let currentTotalCost = days.reduce(
     (sum, day) => sum + day.meals.reduce((mSum, m) => mSum + m.totalGroupPrice, 0),
     0
@@ -501,6 +511,12 @@ export function generateMealPlan({
         if (currentTotalCost <= budgetPln) break;
         const currentMeal = day.meals[mIdx];
         const slot = currentMeal.slotId;
+        const otherDaysRecipeIds = new Set(
+          days
+            .filter((otherD) => otherD.dayNumber !== day.dayNumber)
+            .map((otherD) => otherD.meals[mIdx]?.recipeId)
+        );
+
         const matchingClean = RECIPES.filter(
           (r) =>
             r.mealType === slot &&
@@ -514,7 +530,13 @@ export function generateMealPlan({
             return calculateDishMetrics(r, san, peopleCount);
           })
           .filter((opt) => opt.totalGroupPrice < currentMeal.totalGroupPrice)
-          .sort((a, b) => a.totalGroupPrice - b.totalGroupPrice);
+          .sort((a, b) => {
+            const aUnused = !otherDaysRecipeIds.has(a.recipeId);
+            const bUnused = !otherDaysRecipeIds.has(b.recipeId);
+            if (aUnused && !bUnused) return -1;
+            if (!aUnused && bUnused) return 1;
+            return a.totalGroupPrice - b.totalGroupPrice;
+          });
 
         if (cheaperOptions.length > 0) {
           const replacement = cheaperOptions[0];
