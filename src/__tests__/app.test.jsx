@@ -179,9 +179,18 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(screen.getByText('Wybór produktów w wariancie bez laktozy lub roślinnych alternatyw')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Dalej'));
 
-    // Krok 5: Czy chcesz wykluczyć jakieś produkty? -> Sprawdź kafelki i kliknij Stwórz plan
+    // Krok 5: Jaki cel kaloryczny?
     expect(
-      screen.getByText(/5\.\s*Czy chcesz wykluczyć jakieś produkty\?/i)
+      screen.getByText(/5\.\s*Jaki jest Twój dzienny cel kaloryczny\?/i)
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('2000 kcal').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Standardowy').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Bez liczenia kalorii/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Dalej'));
+
+    // Krok 6: Czy chcesz wykluczyć jakieś produkty? -> Sprawdź kafelki i kliknij Stwórz plan
+    expect(
+      screen.getByText(/6\.\s*Czy chcesz wykluczyć jakieś produkty\?/i)
     ).toBeInTheDocument();
     expect(
       screen.queryByText(/Jeśli chcesz wykluczyć dane składniki w swoich posiłkach, zaznacz je tutaj\./i)

@@ -1,31 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import {
   CheckCircle2,
-  Tag,
-  Flame,
-  ShoppingBag,
   RotateCcw,
-  Users,
-  Calendar,
-  Sparkles,
-  ArrowRight,
-  Check,
 } from 'lucide-react';
-import FilterBar from './FilterBar';
 import DishCard from './DishCard';
 import DishModificationModal from './DishModificationModal';
 
 export default function MealPlanView({
   plan,
-  onUpdateBudgetFilter,
-  onUpdateDietFilter,
   onReplaceIngredient,
   onAcceptPlan,
   onRestartSurvey,
 }) {
   const [selectedDayNumber, setSelectedDayNumber] = useState(1);
-  const [maxCaloriesFilter, setMaxCaloriesFilter] = useState(2000);
-  const [ingredientSearchQuery, setIngredientSearchQuery] = useState('');
   const [editingModalTarget, setEditingModalTarget] = useState(null);
 
   const activeDay = useMemo(() => {
@@ -34,20 +21,7 @@ export default function MealPlanView({
     );
   }, [plan.days, selectedDayNumber]);
 
-  const filteredMeals = useMemo(() => {
-    if (!activeDay) return [];
-    return activeDay.meals.filter((meal) => {
-      const fitsCalories = meal.kcal <= maxCaloriesFilter;
-      const q = ingredientSearchQuery.trim().toLowerCase();
-      const fitsSearch =
-        !q ||
-        meal.title.toLowerCase().includes(q) ||
-        meal.ingredients.some((i) =>
-          i.metrics.name.toLowerCase().includes(q)
-        );
-      return fitsCalories && fitsSearch;
-    });
-  }, [activeDay, maxCaloriesFilter, ingredientSearchQuery]);
+  const mealsToDisplay = activeDay ? activeDay.meals : [];
 
   // Aktualnie edytowana potrawa w modalu (zawsze ze świeżymi przeliczeniami)
   const currentlyEditedDish = useMemo(() => {
@@ -58,8 +32,6 @@ export default function MealPlanView({
     if (!dayObj) return null;
     return dayObj.meals.find((m) => m.slotId === editingModalTarget.slotId);
   }, [plan.days, editingModalTarget]);
-
-  const isWithinBudget = plan.totalCostPln <= plan.budgetPln;
 
   return (
     <div className="pb-36">
@@ -106,7 +78,7 @@ export default function MealPlanView({
         <div className="bg-black/20 rounded-2xl p-2.5 px-3 border border-white/10 flex items-center justify-between gap-2 text-xs">
           <div>
             <span className="text-[9px] font-bold uppercase tracking-wider text-red-100/80 block leading-tight">
-              Średnio / dzień
+              Średnio / dzień {plan.targetCalories ? `• Cel: ${plan.targetCalories} kcal` : ''}
             </span>
             <p className="text-sm font-black text-white leading-tight mt-0.5">
               {plan.avgDailyKcalPerPerson} kcal
@@ -121,19 +93,6 @@ export default function MealPlanView({
           </div>
         </div>
       </div>
-
-      {/* Pasek 4 wymaganych filtrów: Budżet, Dieta, Kalorie, Składniki */}
-      <FilterBar
-        budgetPln={plan.budgetPln}
-        totalCostPln={plan.totalCostPln}
-        dietType={plan.dietType}
-        maxCaloriesFilter={maxCaloriesFilter}
-        ingredientSearchQuery={ingredientSearchQuery}
-        onChangeBudget={onUpdateBudgetFilter}
-        onChangeDiet={onUpdateDietFilter}
-        onChangeMaxCalories={setMaxCaloriesFilter}
-        onChangeIngredientSearch={setIngredientSearchQuery}
-      />
 
       {/* Przełącznik dni planu */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-3">
@@ -158,67 +117,33 @@ export default function MealPlanView({
         })}
       </div>
 
-
-
       {/* Lista 4 posiłków wybranego dnia (Śniadanie, Obiad, Kolacja, Przekąska) */}
       <div className="space-y-3">
-        {filteredMeals.length === 0 ? (
-          <div className="p-8 rounded-3xl bg-white border border-neutral-200 text-center">
-            <p className="text-sm font-bold text-neutral-700">
-              Brak posiłków spełniających wybrane kryteria filtra.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setMaxCaloriesFilter(2000);
-                setIngredientSearchQuery('');
-              }}
-              className="mt-2 px-4 py-2 rounded-xl bg-red-700 text-white text-xs font-bold"
-            >
-              Pokaż wszystkie posiłki
-            </button>
-          </div>
-        ) : (
-          filteredMeals.map((meal) => (
-            <DishCard
-              key={`${activeDay.dayNumber}_${meal.slotId}`}
-              dish={meal}
-              peopleCount={plan.peopleCount}
-              onSelectDish={(clickedDish) =>
-                setEditingModalTarget({
-                  dayNumber: activeDay.dayNumber,
-                  slotId: clickedDish.slotId,
-                })
-              }
-            />
-          ))
-        )}
+        {mealsToDisplay.map((meal) => (
+          <DishCard
+            key={`${activeDay.dayNumber}_${meal.slotId}`}
+            dish={meal}
+            peopleCount={plan.peopleCount}
+            onSelectDish={(clickedDish) =>
+              setEditingModalTarget({
+                dayNumber: activeDay.dayNumber,
+                slotId: clickedDish.slotId,
+              })
+            }
+          />
+        ))}
       </div>
 
-      {/* Przyklejony nad dolnym menu pasek akcji (Stitch Floating Action Tray) */}
+      {/* Przyklejony nad dolnym menu pasek akcji (sam guzik na całej szerokości) */}
       <aside className="fixed bottom-16 left-0 right-0 z-40 max-w-md mx-auto px-3 pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl p-2.5 sm:p-3 shadow-xl flex items-center justify-between gap-3">
-          <div className="shrink-0">
-            <span className="text-[10px] font-bold text-neutral-500 block leading-tight">
-              Razem ({plan.daysCount} {plan.daysCount === 1 ? 'dzień' : 'dni'}):
-            </span>
-            <p className="text-lg sm:text-xl font-black text-red-700 leading-tight whitespace-nowrap mt-0.5">
-              {plan.totalCostPln.toFixed(2)} zł
-            </p>
-            {plan.totalSavedPln > 0 && (
-              <span className="text-[10px] font-extrabold text-emerald-700 leading-tight block whitespace-nowrap mt-0.5">
-                Oszczędzasz {plan.totalSavedPln.toFixed(2)} zł
-              </span>
-            )}
-          </div>
-
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl p-2.5 sm:p-3 shadow-xl">
           <button
             type="button"
             onClick={onAcceptPlan}
-            className="flex-1 min-w-0 py-3 px-3 sm:px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition"
+            className="w-full py-3.5 px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition"
           >
-            <CheckCircle2 className="w-4 h-4 text-amber-300 shrink-0" />
-            <span className="truncate">Akceptuj i przejdź do listy zakupów</span>
+            <CheckCircle2 className="w-5 h-5 text-amber-300 shrink-0" />
+            <span>Akceptuj i przejdź do listy zakupów</span>
           </button>
         </div>
       </aside>

@@ -5,6 +5,7 @@ import {
   Calendar,
   Wallet,
   Salad,
+  Flame,
   Search,
   Sparkles,
   ChevronRight,
@@ -200,6 +201,39 @@ export const EXCLUSION_GROUPS = [
   },
 ];
 
+export const CALORIE_PRESETS = [
+  {
+    id: 1600,
+    label: '1600 kcal – Redukcja',
+    description: 'Lekki deficyt, idealny do zrzucenia zbędnych kilogramów',
+    badge: 'Redukcja',
+  },
+  {
+    id: 1800,
+    label: '1800 kcal – Umiarkowany',
+    description: 'Dla osób o umiarkowanej aktywności w ciągu dnia',
+    badge: 'Fit',
+  },
+  {
+    id: 2000,
+    label: '2000 kcal – Standardowy',
+    description: 'Klasyczny, optymalnie zbilansowany poziom energii',
+    badge: 'Rekomendowany',
+  },
+  {
+    id: 2400,
+    label: '2400 kcal – Aktywny',
+    description: 'Dla osób trenujących, uprawiających sport i aktywnych',
+    badge: 'Energia',
+  },
+  {
+    id: 'dowolny',
+    label: 'Bez liczenia kalorii',
+    description: 'Pełnowartościowe dania bez restrykcji kalorycznych',
+    badge: 'Swobodny',
+  },
+];
+
 function RollerPicker({
   label,
   value,
@@ -336,6 +370,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   const [daysCount, setDaysCount] = useState(initialValues?.daysCount || 3);
   const [budgetPln, setBudgetPln] = useState(initialValues?.budgetPln || 140);
   const [dietType, setDietType] = useState(initialValues?.dietType || 'nie_vege');
+  const [targetCalories, setTargetCalories] = useState(
+    initialValues?.targetCalories !== undefined ? initialValues.targetCalories : 2000
+  );
   const [excludedProductIds, setExcludedProductIds] = useState(
     initialValues?.excludedProductIds || []
   );
@@ -395,6 +432,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
       daysCount,
       budgetPln,
       dietType,
+      targetCalories,
       excludedProductIds: customExcluded,
     });
   };
@@ -413,18 +451,18 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   return (
     <div className="flex flex-col justify-between min-h-[calc(100vh-150px)]">
       <div>
-        {/* Pasek postępu ankiety 1..5 w stylu Stitch */}
+        {/* Pasek postępu ankiety 1..6 w stylu Stitch */}
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
             <span className="text-red-700 uppercase tracking-wider font-extrabold">
-              Krok {step} z 5
+              Krok {step} z 6
             </span>
-            <span className="font-extrabold text-neutral-800">{Math.round((step / 5) * 100)}%</span>
+            <span className="font-extrabold text-neutral-800">{Math.round((step / 6) * 100)}%</span>
           </div>
           <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-red-700 rounded-full transition-all duration-300"
-              style={{ width: `${(step / 5) * 100}%` }}
+              style={{ width: `${(step / 6) * 100}%` }}
             />
           </div>
         </div>
@@ -590,11 +628,118 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           </div>
         )}
 
-        {/* KROK 5: Czy chcesz wykluczyć jakieś produkty? */}
+        {/* KROK 5: Jaki cel kaloryczny? - Suwak z 2000 kcal na środku */}
         {step === 5 && (
           <div className="space-y-6 pt-1">
             <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-              5. Czy chcesz wykluczyć jakieś produkty?
+              5. Jaki jest Twój dzienny cel kaloryczny?
+            </h1>
+
+            <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
+              <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-1">
+                Dzienny cel kalorii na 1 osobę
+              </span>
+
+              <div className="flex items-baseline gap-2 my-2">
+                <div className="text-3xl sm:text-4xl font-black text-red-700 tracking-tight">
+                  {targetCalories === 'dowolny' ? 'Bez liczenia' : `${targetCalories || 2000} kcal`}
+                </div>
+                {targetCalories !== 'dowolny' && (
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700">
+                    {(targetCalories || 2000) <= 1650
+                      ? 'Redukcja'
+                      : (targetCalories || 2000) <= 1850
+                      ? 'Umiarkowany'
+                      : (targetCalories || 2000) <= 2150
+                      ? 'Standardowy'
+                      : 'Aktywny'}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs font-semibold text-neutral-600 mb-4">
+                {targetCalories === 'dowolny'
+                  ? 'Zbilansowane i pełnowartościowe posiłki z oferty Biedronki bez limitu'
+                  : (targetCalories || 2000) <= 1650
+                  ? 'Lekki deficyt kaloryczny sprzyjający zdrowej redukcji wagi'
+                  : (targetCalories || 2000) <= 1850
+                  ? 'Dla osób o umiarkowanej aktywności fizycznej w ciągu dnia'
+                  : (targetCalories || 2000) <= 2150
+                  ? 'Klasyczny, zrównoważony bilans zalecany dla większości osób'
+                  : 'Większe zapotrzebowanie energetyczne dla osób trenujących'}
+              </p>
+
+              {/* Suwak z 2000 kcal dokładnie na środku (1400 .. 2000 .. 2600) */}
+              <div className="relative pt-1 pb-1">
+                <input
+                  type="range"
+                  min={1400}
+                  max={2600}
+                  step={50}
+                  value={typeof targetCalories === 'number' ? targetCalories : 2000}
+                  onChange={(e) => setTargetCalories(Number(e.target.value))}
+                  className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
+                />
+
+                {/* Stopnie kaloryczne na suwaku - 2000 na samym środku */}
+                <div className="flex justify-between text-[11px] font-bold text-neutral-500 mt-2">
+                  <span className="text-left">1400<br/><span className="text-[9px] text-neutral-400 font-normal">Min</span></span>
+                  <span className="text-center">1600<br/><span className="text-[9px] text-neutral-400 font-normal">Redukcja</span></span>
+                  <span className="text-center font-black text-red-700">2000<br/><span className="text-[9px] text-red-600 font-extrabold">Standard</span></span>
+                  <span className="text-center">2400<br/><span className="text-[9px] text-neutral-400 font-normal">Aktywny</span></span>
+                  <span className="text-right">2600<br/><span className="text-[9px] text-neutral-400 font-normal">Max</span></span>
+                </div>
+              </div>
+
+              {/* Przyciski szybkich stopni kalorycznych */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
+                {[
+                  { kcal: 1600, label: '1600 kcal', desc: 'Redukcja' },
+                  { kcal: 1800, label: '1800 kcal', desc: 'Umiarkowany' },
+                  { kcal: 2000, label: '2000 kcal', desc: 'Standardowy' },
+                  { kcal: 2400, label: '2400 kcal', desc: 'Aktywny' },
+                ].map((tier) => {
+                  const isSelected = targetCalories === tier.kcal;
+                  return (
+                    <button
+                      key={tier.kcal}
+                      type="button"
+                      onClick={() => setTargetCalories(tier.kcal)}
+                      className={`py-2 px-2 rounded-xl border text-center transition ${
+                        isSelected
+                          ? 'border-red-600 bg-red-50 text-red-700 font-bold'
+                          : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
+                      }`}
+                    >
+                      <p className="text-xs font-black">{tier.label}</p>
+                      <p className="text-[10px] font-semibold text-neutral-500 mt-0.5">{tier.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Opcja swobodna: Bez liczenia kalorii */}
+              <button
+                type="button"
+                onClick={() => setTargetCalories(targetCalories === 'dowolny' ? 2000 : 'dowolny')}
+                className={`w-full mt-2.5 py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
+                  targetCalories === 'dowolny'
+                    ? 'border-red-600 bg-red-50 text-red-700'
+                    : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-neutral-500" />
+                <span>Bez liczenia kalorii</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* KROK 6: Czy chcesz wykluczyć jakieś produkty? */}
+        {step === 6 && (
+          <div className="space-y-6 pt-1">
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+              6. Czy chcesz wykluczyć jakieś produkty?
             </h1>
 
             <div className="space-y-3">
@@ -777,7 +922,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         )}
       </div>
 
-      {/* Nawigacja Wstecz / Dalej dla kroków 1..4 oraz Wstecz / Stwórz plan dla kroku 5 */}
+      {/* Nawigacja Wstecz / Dalej dla kroków 1..5 oraz Wstecz / Stwórz plan dla kroku 6 */}
       <div className="pt-4 mt-5 border-t border-neutral-200/80 flex items-center gap-2.5">
         {step > 1 && (
           <button
@@ -790,7 +935,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           </button>
         )}
 
-        {step < 5 ? (
+        {step < 6 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}

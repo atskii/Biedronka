@@ -315,6 +315,7 @@ export function generateMealPlan({
   daysCount = 3,
   budgetPln = 150,
   dietType = 'nie_vege',
+  targetCalories = 2000,
   excludedProductIds = [],
 }) {
   const excludedSet = new Set(excludedProductIds);
@@ -370,7 +371,35 @@ export function generateMealPlan({
       );
 
       const pool = cleanRecipes.length > 0 ? cleanRecipes : matchingRecipes;
-      const chosenRecipe = pool[(d + pool.length) % pool.length];
+
+      // Dobierz przepis pod kątem docelowego bilansu kalorii na dany posiłek
+      let chosenRecipe;
+      if (typeof targetCalories === 'number' && targetCalories > 0) {
+        const slotRatios = {
+          sniadanie: 0.25,
+          obiad: 0.35,
+          kolacja: 0.25,
+          przekaska: 0.15,
+        };
+        const targetSlotKcal = targetCalories * (slotRatios[mealSlot.id] || 0.25);
+
+        const sortedByKcal = [...pool].sort((a, b) => {
+          const estA = a.ingredients.reduce((acc, ing) => {
+            const p = PRODUCTS[ing.productId];
+            return acc + (p ? (p.kcalPer100g * ing.portionGrams) / 100 : 0);
+          }, 0);
+          const estB = b.ingredients.reduce((acc, ing) => {
+            const p = PRODUCTS[ing.productId];
+            return acc + (p ? (p.kcalPer100g * ing.portionGrams) / 100 : 0);
+          }, 0);
+          return Math.abs(estA - targetSlotKcal) - Math.abs(estB - targetSlotKcal);
+        });
+
+        chosenRecipe = sortedByKcal[(d + sortedByKcal.length) % sortedByKcal.length];
+      } else {
+        chosenRecipe = pool[(d + pool.length) % pool.length];
+      }
+
       const sanitizedIngredients = sanitizeRecipeIngredients(chosenRecipe);
       const dish = calculateDishMetrics(chosenRecipe, sanitizedIngredients, peopleCount);
 
@@ -394,6 +423,7 @@ export function generateMealPlan({
     daysCount,
     budgetPln,
     dietType,
+    targetCalories,
     excludedProductIds,
     days,
   });

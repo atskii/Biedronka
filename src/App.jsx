@@ -22,6 +22,7 @@ export default function App() {
     daysCount: 3,
     budgetPln: 140,
     dietType: 'nie_vege',
+    targetCalories: 2000,
     excludedProductIds: [],
   });
 
@@ -31,6 +32,7 @@ export default function App() {
       daysCount: 3,
       budgetPln: 140,
       dietType: 'nie_vege',
+      targetCalories: 2000,
       excludedProductIds: [],
     })
   );
