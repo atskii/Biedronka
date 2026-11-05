@@ -201,7 +201,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
 
     // Widok wygenerowanego planu (4 posiłki: Śniadanie, Obiad, Kolacja, Przekąska)
     expect(
-      screen.getByText(/Twój wygenerowany jadłospis/i)
+      screen.getByText(/Twój jadłospis/i)
     ).toBeInTheDocument();
     expect(screen.getByText('Śniadanie')).toBeInTheDocument();
     expect(screen.getByText('Obiad')).toBeInTheDocument();
