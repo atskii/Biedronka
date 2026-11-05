@@ -284,7 +284,7 @@ function RollerPicker({
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-700/20 rounded-2xl"
+          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-700/20 rounded-2xl touch-none"
         >
           {/* Taśma rollera */}
           <div
@@ -411,11 +411,21 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   }
 
   return (
-    <div className="flex flex-col justify-between min-h-[calc(100vh-150px)]">
-      <div>
+    <div
+      className={`flex flex-col justify-between h-full min-h-0 ${
+        step <= 4 ? 'overflow-hidden' : ''
+      }`}
+    >
+      <div
+        className={`flex-1 min-h-0 ${
+          step <= 4
+            ? 'overflow-hidden flex flex-col justify-start'
+            : 'overflow-y-auto pr-0.5'
+        }`}
+      >
         {/* Pasek postępu ankiety 1..5 w stylu Stitch */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
+        <div className="mb-4 sm:mb-6 shrink-0">
+          <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-1.5">
             <span className="text-red-700 uppercase tracking-wider font-extrabold">
               Krok {step} z 5
             </span>
@@ -431,8 +441,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 1: Na ile osób? */}
         {step === 1 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 sm:space-y-6 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               1. Na ile osób przygotować plan?
             </h1>
 
@@ -448,8 +458,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 2: Ile dni? */}
         {step === 2 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 sm:space-y-6 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               2. Na ile dni chcesz zaplanować posiłki?
             </h1>
 
@@ -468,21 +478,21 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 3: Jaki budżet? */}
         {step === 3 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-3 sm:space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               3. Jaki budżet chcesz przeznaczyć?
             </h1>
 
-            <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
-              <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-1">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
+              <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-0.5 sm:mb-1">
                 Całkowity budżet na {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} dla {peopleCount} os.
               </span>
 
-              <div className="text-3xl sm:text-4xl font-black text-red-700 my-2 tracking-tight">
+              <div className="text-2xl sm:text-4xl font-black text-red-700 my-1 sm:my-2 tracking-tight">
                 {budgetPln} zł
               </div>
 
-              <p className="text-xs font-semibold text-neutral-600 mb-4">
+              <p className="text-xs font-semibold text-neutral-600 mb-3 sm:mb-4">
                 To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę
               </p>
 
@@ -496,7 +506,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
               />
 
-              <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="grid grid-cols-3 gap-2 mt-3 sm:mt-4">
                 {[
                   {
                     label: 'Oszczędny',
@@ -518,7 +528,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                       key={preset.label}
                       type="button"
                       onClick={() => setBudgetPln(val)}
-                      className={`py-2.5 px-2 rounded-xl border text-center transition ${
+                      className={`py-2 px-1.5 sm:py-2.5 sm:px-2 rounded-xl border text-center transition ${
                         isSelected
                           ? 'border-red-600 bg-red-50 text-red-700 font-bold'
                           : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
@@ -536,12 +546,12 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 4: Jaka dieta? */}
         {step === 4 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-2.5 pt-0.5">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               4. Jaka dieta Cię interesuje?
             </h1>
 
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-2 pt-0.5">
               {DIET_OPTIONS.map((option) => {
                 const active = dietType === option.id;
                 return (
@@ -549,33 +559,33 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     key={option.id}
                     type="button"
                     onClick={() => setDietType(option.id)}
-                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between text-left transition active:scale-98 ${
+                    className={`w-full p-3 sm:p-4 rounded-2xl border-2 flex items-center justify-between text-left transition active:scale-98 ${
                       active
                         ? 'border-red-600 bg-red-50/70 shadow-sm'
                         : 'border-neutral-200 bg-white hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
+                    <div className="flex items-center gap-3">
                       <FoodIcon
                         category={option.id}
-                        className="w-5 h-5 text-neutral-800"
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-800"
                         withContainer
-                        containerClassName="w-11 h-11 rounded-xl shrink-0"
+                        containerClassName="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shrink-0"
                         tone={active ? 'crimson' : 'default'}
                       />
                       <div>
-                        <p className="text-base font-extrabold text-neutral-900">
+                        <p className="text-sm sm:text-base font-extrabold text-neutral-900">
                           {option.label}
                         </p>
                         {option.description && (
-                          <p className="text-xs text-neutral-600 mt-0.5">
+                          <p className="text-[11px] sm:text-xs text-neutral-600 mt-0.5 leading-tight">
                             {option.description}
                           </p>
                         )}
                       </div>
                     </div>
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2 ${
+                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0 ml-2 ${
                         active
                           ? 'bg-red-700 text-white shadow-2xs'
                           : 'border-2 border-neutral-300'
@@ -778,12 +788,12 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
       </div>
 
       {/* Nawigacja Wstecz / Dalej dla kroków 1..4 oraz Wstecz / Stwórz plan dla kroku 5 */}
-      <div className="pt-4 mt-5 border-t border-neutral-200/80 flex items-center gap-2.5">
+      <div className="pt-2.5 sm:pt-3 border-t border-neutral-200/80 flex items-center gap-2.5 shrink-0 bg-[#FBFBF7]">
         {step > 1 && (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="px-4 sm:px-5 py-3 rounded-2xl bg-white border border-neutral-300 text-neutral-800 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
+            className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-white border border-neutral-300 text-neutral-800 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Wstecz</span>
@@ -794,7 +804,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
-            className="flex-1 py-3 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
+            className="flex-1 py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
           >
             <span>Dalej</span>
             <ChevronRight className="w-4 h-4" />
@@ -805,7 +815,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
             onClick={() =>
               triggerGeneration(exclusionMode === 'nie' ? [] : excludedProductIds)
             }
-            className="flex-1 py-3.5 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
+            className="flex-1 py-3 sm:py-3.5 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
           >
             <span>Stwórz plan</span>
           </button>

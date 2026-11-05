@@ -193,9 +193,15 @@ export default function App() {
   return (
     <div className="min-h-screen bg-neutral-200/50 text-neutral-900 font-sans flex justify-center">
       {/* Kontener mobilny o szerokości dopasowanej do smartfona (max-w-md = 448px) */}
-      <div className="w-full max-w-md min-h-screen bg-[#FBFBF7] relative flex flex-col shadow-2xl">
+      <div
+        className={`w-full max-w-md bg-[#FBFBF7] relative flex flex-col shadow-2xl ${
+          stage === 'survey'
+            ? 'h-[100dvh] max-h-[100dvh] overflow-hidden'
+            : 'min-h-screen'
+        }`}
+      >
         {/* Kompaktowy pasek górny (TopAppBar) */}
-        <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800 relative overflow-hidden">
+        <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800 relative overflow-hidden shrink-0">
           <div className="px-4 py-3 flex items-center justify-between relative z-10">
             <span className="font-black text-lg sm:text-xl tracking-tight text-white">
               Biedronka
@@ -213,7 +219,13 @@ export default function App() {
         </header>
 
         {/* Główna zawartość mobilna */}
-        <main className="flex-1 px-3 sm:px-4 pt-3 sm:pt-4 pb-20">
+        <main
+          className={`flex-1 px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 ${
+            stage === 'survey'
+              ? 'pb-16 flex flex-col min-h-0 overflow-hidden'
+              : 'pb-20'
+          }`}
+        >
           {stage === 'survey' && (
             <SurveyWizard
               initialValues={surveyParams}
