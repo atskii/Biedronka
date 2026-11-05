@@ -144,11 +144,10 @@ export default function MealPlanView({
               key={day.dayNumber}
               type="button"
               onClick={() => setSelectedDayNumber(day.dayNumber)}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap border transition shadow-2xs ${
-                active
-                  ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs'
-                  : 'bg-white text-neutral-700 border-neutral-200/90 hover:border-neutral-300'
-              }`}
+              className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap border transition shadow-2xs ${active
+                ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs'
+                : 'bg-white text-neutral-700 border-neutral-200/90 hover:border-neutral-300'
+                }`}
             >
               <span>{day.label}</span>
               <span className="ml-1.5 text-[11px] opacity-80">
