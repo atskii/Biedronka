@@ -1,0 +1,37 @@
+{
+  "name": "moja-biedronka-jadlospis",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "@vercel/analytics": "^1.5.0",
+    "canvas-confetti": "^1.9.3",
+    "framer-motion": "^12.4.7",
+    "lucide-react": "^0.475.0",
+    "mobile-drag-drop": "^2.3.0-rc.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "web-vitals": "^4.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.7",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "jsdom": "^26.0.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.7",
+    "vite": "^6.1.1",
+    "vitest": "^3.0.7"
+  }
+}
+
