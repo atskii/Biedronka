@@ -18,18 +18,9 @@ import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
 import FoodIcon from '../common/FoodIcon';
 
-const ROLLER_PEOPLE_OPTIONS = [
-  { count: 1, label: '1 osoba', desc: 'Singiel • porcje indywidualne' },
-  { count: 2, label: '2 osoby', desc: 'Dla pary lub 2 współlokatorów' },
-  { count: 3, label: '3 osoby', desc: 'Trzyosobowe gospodarstwo' },
-  { count: 4, label: '4 osoby', desc: 'Pełny obiad dla 4 osób' },
-  { count: 5, label: '5 osób', desc: 'Większa grupa (5 osób)' },
-  { count: 6, label: '6 osób', desc: 'Duża grupa (6 osób)' },
-];
-
 function PeopleRollerPicker({ value, onChange }) {
   const touchStartY = useRef(0);
-  const ITEM_HEIGHT = 56; // wysokość slotu w px
+  const ITEM_HEIGHT = 48; // px
 
   const handlePrev = () => {
     onChange(Math.max(1, value - 1));
@@ -71,124 +62,81 @@ function PeopleRollerPicker({ value, onChange }) {
     }
   };
 
-  const activeOption =
-    ROLLER_PEOPLE_OPTIONS.find((o) => o.count === value) || ROLLER_PEOPLE_OPTIONS[1];
-
   return (
-    <div className="bg-white rounded-3xl border border-neutral-200/90 p-4 sm:p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-500">
-          Wybór liczby osób (1–6)
-        </span>
-        <span className="text-[10px] font-black text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-          Roller góra-dół
-        </span>
-      </div>
+    <div className="bg-white rounded-3xl p-6 sm:p-8 flex items-center justify-center gap-4 shadow-xs">
+      <span className="text-xl sm:text-2xl font-extrabold text-neutral-900 select-none">
+        Liczba osób:
+      </span>
 
-      {/* Kontener pola wyboru typu roller */}
-      <div
-        tabIndex={0}
-        role="spinbutton"
-        aria-valuenow={value}
-        aria-valuemin={1}
-        aria-valuemax={6}
-        aria-label="Pole wyboru liczby osób od 1 do 6"
-        onKeyDown={handleKeyDown}
-        onWheel={handleWheel}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        className="relative select-none outline-none focus:ring-2 focus:ring-red-600/30 rounded-2xl"
-      >
-        {/* Przycisk góra */}
+      {/* Roller góra-dół */}
+      <div className="flex flex-col items-center">
         <button
           type="button"
           onClick={handlePrev}
           disabled={value <= 1}
-          className="w-full py-1.5 flex items-center justify-center text-neutral-400 hover:text-red-700 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer active:scale-95"
-          aria-label="Przewiń w górę (mniej osób)"
+          className="p-1 text-neutral-400 hover:text-red-700 disabled:opacity-15 disabled:pointer-events-none transition cursor-pointer active:scale-90"
+          aria-label="Przewiń w górę (mniej)"
         >
           <ChevronUp className="w-5 h-5 stroke-[2.5]" />
         </button>
 
-        {/* Okno wizjera rollera */}
-        <div className="relative h-[168px] overflow-hidden my-0.5">
-          {/* Aktywny wskaźnik wyboru w centrum */}
-          <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-14 rounded-2xl bg-red-50/85 border-2 border-red-600 pointer-events-none z-10 shadow-xs" />
+        <div
+          tabIndex={0}
+          role="spinbutton"
+          aria-valuenow={value}
+          aria-valuemin={1}
+          aria-valuemax={6}
+          aria-label="Liczba osób"
+          onKeyDown={handleKeyDown}
+          onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-600/20 rounded-2xl"
+        >
+          {/* Ramka aktywnej liczby w centrum */}
+          <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-12 rounded-xl bg-red-50/80 pointer-events-none z-10" />
 
-          {/* Gradienty cylindryczne góra i dół */}
-          <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-white via-white/80 to-transparent pointer-events-none z-20" />
-          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
+          {/* Maski gradientowe góra i dół */}
+          <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-white via-white/80 to-transparent pointer-events-none z-20" />
+          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
 
-          {/* Przesuwna taśma rollera */}
+          {/* Taśma rollera */}
           <div
-            className="transition-transform duration-300 ease-out will-change-transform"
+            className="transition-transform duration-250 ease-out will-change-transform"
             style={{
               transform: `translateY(${(1 - (value - 1)) * ITEM_HEIGHT}px)`,
             }}
           >
-            {ROLLER_PEOPLE_OPTIONS.map((item) => {
-              const isSelected = item.count === value;
-              const IconComp = item.count === 1 ? User : Users;
+            {[1, 2, 3, 4, 5, 6].map((num) => {
+              const isSelected = num === value;
               return (
                 <button
                   type="button"
-                  key={item.count}
-                  onClick={() => onChange(item.count)}
-                  className={`w-full h-14 flex items-center justify-center gap-3 transition-all duration-200 cursor-pointer ${
+                  key={num}
+                  onClick={() => onChange(num)}
+                  className={`w-full h-12 flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                      ? 'text-red-700 font-black scale-100 opacity-100 z-10'
-                      : 'text-neutral-400 font-bold scale-90 opacity-40 hover:opacity-75'
+                      ? 'text-3xl font-black text-red-700 scale-105 z-10'
+                      : 'text-lg font-bold text-neutral-400 opacity-40 hover:opacity-75'
                   }`}
-                  aria-label={`${item.label}`}
+                  aria-label={`${num}`}
                 >
-                  <IconComp
-                    className={`w-5 h-5 ${
-                      isSelected ? 'text-red-700 stroke-[2.5]' : 'text-neutral-400'
-                    }`}
-                  />
-                  <span
-                    className={`tracking-tight ${
-                      isSelected ? 'text-2xl font-black' : 'text-lg font-bold'
-                    }`}
-                  >
-                    {item.label}
-                  </span>
+                  {num}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Przycisk dół */}
         <button
           type="button"
           onClick={handleNext}
           disabled={value >= 6}
-          className="w-full py-1.5 flex items-center justify-center text-neutral-400 hover:text-red-700 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer active:scale-95"
-          aria-label="Przewiń w dół (więcej osób)"
+          className="p-1 text-neutral-400 hover:text-red-700 disabled:opacity-15 disabled:pointer-events-none transition cursor-pointer active:scale-90"
+          aria-label="Przewiń w dół (więcej)"
         >
           <ChevronDown className="w-5 h-5 stroke-[2.5]" />
         </button>
-      </div>
-
-      {/* Podsumowanie wybranego wariantu */}
-      <div className="mt-3 p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-300 text-neutral-950 flex items-center justify-center font-black text-lg shadow-xs">
-            {value}
-          </div>
-          <div>
-            <p className="text-sm font-extrabold text-neutral-900">
-              {activeOption.label}
-            </p>
-            <p className="text-xs text-neutral-500 font-medium">
-              {activeOption.desc}
-            </p>
-          </div>
-        </div>
-        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-          Rolka 1–6
-        </span>
       </div>
     </div>
   );
@@ -260,17 +208,10 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 1: Na ile osób? */}
         {step === 1 && (
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
-              <Users className="w-3.5 h-3.5" />
-              <span>Pytanie 1 z 5</span>
-            </div>
-            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
+          <div className="space-y-6 pt-1">
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
               1) Na ile osób przygotować plan?
             </h1>
-            <p className="text-sm text-neutral-600">
-              Automatycznie dopasujemy gramatury przepisów oraz liczbę opakowań na liście zakupów.
-            </p>
 
             <PeopleRollerPicker
               value={peopleCount}

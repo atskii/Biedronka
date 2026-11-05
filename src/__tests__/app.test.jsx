@@ -127,8 +127,8 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(roller).toBeInTheDocument();
     expect(roller).toHaveAttribute('aria-valuenow', '2');
     
-    // Test rollera: zmiana na 4 osoby za pomocą przycisku lub kliknięcia opcji
-    fireEvent.click(screen.getByRole('button', { name: /4 osoby/i }));
+    // Test rollera: zmiana na 4 osoby za pomocą kliknięcia opcji na rolce
+    fireEvent.click(screen.getByRole('button', { name: '4' }));
     expect(roller).toHaveAttribute('aria-valuenow', '4');
 
     fireEvent.click(screen.getByText('Dalej'));
