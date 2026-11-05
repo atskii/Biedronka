@@ -2,6 +2,7 @@ import React from 'react';
 import { X, RefreshCw, ArrowRightLeft } from 'lucide-react';
 import { getShelfAlternativesForProduct } from '../../services/mealPlanEngine';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
 
 /**
  * Modal wyświetlający ogólne "Alternatywy" na półce po kliknięciu przycisku "Brak produktu" na liście zakupów.
@@ -49,12 +50,11 @@ export default function ProductAlternativesModal({
         {/* Informacja o brakującym produkcie */}
         <div className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2.5">
-            <FoodIcon
+            <ProductImage
+              productId={missingItem.productId || missingItem.product?.id}
+              name={missingItem.product.name}
               category={missingItem.product.category}
-              subType={missingItem.product.name}
-              className="w-5 h-5 text-neutral-800"
-              withContainer
-              containerClassName="w-9 h-9 rounded-xl"
+              className="w-10 h-10 rounded-xl shrink-0"
               tone="dark"
             />
             <div>
@@ -93,12 +93,11 @@ export default function ProductAlternativesModal({
                 className="w-full p-3.5 rounded-2xl border-2 border-neutral-200 hover:border-red-600 bg-white hover:bg-red-50/20 text-left flex items-center justify-between gap-3 transition"
               >
                 <div className="flex items-start gap-3 min-w-0">
-                  <FoodIcon
+                  <ProductImage
+                    productId={alt.product.id}
+                    name={alt.product.name}
                     category={alt.product.category}
-                    subType={alt.product.name}
-                    className="w-5 h-5 text-neutral-800"
-                    withContainer
-                    containerClassName="w-10 h-10 rounded-xl shrink-0 mt-0.5"
+                    className="w-11 h-11 rounded-xl shrink-0 mt-0.5"
                     tone={alt.product.isGazetkaPromo ? 'promo' : alt.product.isFit ? 'fit' : 'default'}
                   />
                   <div className="min-w-0">

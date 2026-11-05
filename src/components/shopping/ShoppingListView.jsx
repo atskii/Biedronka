@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import ProductAlternativesModal from './ProductAlternativesModal';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
 
 export function formatDuration(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -223,13 +224,12 @@ export default function ShoppingListView({
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <FoodIcon
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <ProductImage
+                            productId={item.product.id}
+                            name={item.product.name}
                             category={item.product.category}
-                            subType={item.product.name}
-                            className="w-4 h-4 text-neutral-700"
-                            withContainer
-                            containerClassName="w-7 h-7 rounded-lg"
+                            className="w-8 h-8 rounded-lg"
                             tone={item.product.isGazetkaPromo ? 'promo' : item.product.isFit ? 'fit' : 'default'}
                           />
                           <span

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Tag, Sparkles, Clock, Flame, Check, RefreshCw } from 'lucide-react';
 import { getIngredientSubstitutesForDish } from '../../services/mealPlanEngine';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
+import DishImage from '../common/DishImage';
 
 /**
  * Modal modyfikacji potrawy w stylu Stitch:
@@ -39,32 +41,40 @@ export default function DishModificationModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-neutral-200">
-        {/* Nagłówek modala z ceną, czasem i makro potrawy */}
-        <div className="p-4 bg-neutral-900 text-white flex items-start justify-between gap-3">
-          <div>
+        {/* Nagłówek modala ze zdjęciem potrawy, statusem i czasem */}
+        <div className="relative h-40 sm:h-48 w-full overflow-hidden bg-neutral-900 shrink-0">
+          <DishImage
+            recipeId={dish.recipeId}
+            mealType={dish.slotId || dish.mealType}
+            title={dish.title}
+            className="w-full h-full"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-black/30 pointer-events-none" />
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-xs text-white transition z-10"
+            aria-label="Zamknij modyfikację potrawy"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="absolute bottom-3 left-4 right-4 text-white">
             <div className="flex items-center gap-2 text-xs font-bold text-amber-300 mb-1">
               <span className="inline-flex items-center gap-1.5">
                 <FoodIcon category={dish.slotId} className="w-3.5 h-3.5" />
                 Dzień {dayNumber} • {dish.slotLabel}
               </span>
               <span>•</span>
-              <span className="inline-flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> {dish.prepTimeLabel}
+              <span className="inline-flex items-center gap-1 text-white">
+                <Clock className="w-3.5 h-3.5 text-amber-300" /> {dish.prepTimeLabel}
               </span>
             </div>
-            <h2 className="text-lg font-black leading-snug">
+            <h2 className="text-lg sm:text-xl font-black leading-snug drop-shadow-xs">
               {dish.title}
             </h2>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
-            aria-label="Zamknij modyfikację potrawy"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Pasek podsumowania Ceny (najważniejsza) i Makro potrawy */}
@@ -126,14 +136,13 @@ export default function DishModificationModal({
                         : 'bg-white'
                     }`}
                   >
-                    {/* Odznaki Gazetka (żółto) / Fit (zielono) na kwadracie */}
+                    {/* Odznaki Gazetka (żółto) / Fit (zielono) na kwadracie ze zdjęciem produktu */}
                     <div className="flex items-center justify-between w-full gap-1">
-                      <FoodIcon
+                      <ProductImage
+                        productId={ing.productId}
+                        name={ing.metrics.name}
                         category={ing.metrics.product?.category || ''}
-                        subType={ing.metrics.name}
-                        className="w-5 h-5 text-neutral-800"
-                        withContainer
-                        containerClassName="w-8 h-8 rounded-lg"
+                        className="w-10 h-10 rounded-xl"
                         tone={isPromo ? 'promo' : isFit ? 'fit' : 'default'}
                       />
                       {isPromo ? (
@@ -225,12 +234,11 @@ export default function DishModificationModal({
                         }`}
                       >
                         <div className="flex items-start gap-3 min-w-0">
-                          <FoodIcon
+                          <ProductImage
+                            productId={sub.product.id}
+                            name={sub.product.name}
                             category={sub.product.category}
-                            subType={sub.product.name}
-                            className="w-5 h-5 text-neutral-800"
-                            withContainer
-                            containerClassName="w-10 h-10 rounded-xl mt-0.5"
+                            className="w-11 h-11 rounded-xl mt-0.5"
                             tone={isPromo ? 'promo' : isFit ? 'fit' : 'default'}
                           />
                           <div className="min-w-0">

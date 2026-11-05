@@ -1,14 +1,17 @@
 import React from 'react';
 import { Clock, Flame, Tag, Sparkles, Edit3, ArrowRight } from 'lucide-react';
 import FoodIcon from '../common/FoodIcon';
+import ProductImage from '../common/ProductImage';
+import DishImage from '../common/DishImage';
 
 /**
  * Karta produktów (dań) według designu Stitch (Modern Tactile Retail):
+ * - Zdjęcie potrawy (apetyczne, wysokiej jakości)
  * - Cena (najważniejsza!)
  * - Kalorie
  * - Makra (węgle, białko i tłuszcze)
  * - Czas przygotowania (np. 15m, 30m, 2h)
- * - Składniki w kwadratach (zastępuje emotki wektorowymi ikonami)
+ * - Składniki w kwadratach (zastępuje emotki zdjęciami produktów i ikonami)
  */
 export default function DishCard({ dish, peopleCount, onSelectDish }) {
   return (
@@ -22,36 +25,49 @@ export default function DishCard({ dish, peopleCount, onSelectDish }) {
           onSelectDish(dish);
         }
       }}
-      className="bg-white rounded-3xl border border-neutral-200/90 hover:border-red-600 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
+      className="bg-white rounded-3xl border border-neutral-200/90 hover:border-red-600 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
     >
-      {/* Górny wiersz: Typ posiłku + Czas przygotowania + NAJWAŻNIEJSZA CENA */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {/* Slot Posiłku z wektorową ikoną */}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-800 text-[11px] font-bold">
-              <FoodIcon category={dish.slotId} className="w-3.5 h-3.5 text-neutral-600" />
-              <span>{dish.slotLabel}</span>
-            </span>
+      {/* Zdjęcie potrawy z nakładkami statusu i czasem przygotowania */}
+      <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden mb-3 border border-neutral-100/90 shadow-2xs">
+        <DishImage
+          recipeId={dish.recipeId}
+          mealType={dish.slotId || dish.mealType}
+          title={dish.title}
+          className="w-full h-full"
+        />
 
-            {/* Czas przygotowania */}
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-bold">
-              <Clock className="w-3 h-3 text-amber-300" />
-              <span>{dish.prepTimeLabel}</span>
-            </span>
+        {/* Delikatny gradient dla kontrastu nakładek */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/35 pointer-events-none" />
 
-            {dish.gazetkaCount > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-[10px] font-black uppercase tracking-tight">
-                <Tag className="w-3 h-3 text-red-700" />
-                <span>{dish.gazetkaCount} z Gazetki</span>
-              </span>
-            )}
-          </div>
+        {/* Plakietki na zdjęciu: Slot posiłku + Czas przygotowania */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-neutral-900 text-[11px] font-extrabold shadow-xs">
+            <FoodIcon category={dish.slotId} className="w-3.5 h-3.5 text-neutral-700" />
+            <span>{dish.slotLabel}</span>
+          </span>
 
-          <h3 className="text-base font-extrabold text-neutral-900 mt-2 group-hover:text-red-700 transition leading-snug">
-            {dish.title}
-          </h3>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-950/85 backdrop-blur-xs text-white text-[11px] font-bold shadow-xs">
+            <Clock className="w-3 h-3 text-amber-300" />
+            <span>{dish.prepTimeLabel}</span>
+          </span>
         </div>
+
+        {/* Plakietka Gazetki na zdjęciu */}
+        {dish.gazetkaCount > 0 && (
+          <div className="absolute top-2.5 right-2.5">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-neutral-950 text-[10px] font-black uppercase tracking-tight shadow-xs border border-amber-500/30">
+              <Tag className="w-3 h-3 text-red-700" />
+              <span>{dish.gazetkaCount} z Gazetki</span>
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Tytuł dania + Najważniejsza Cena w żółtym boksie Biedronki */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <h3 className="text-base font-extrabold text-neutral-900 group-hover:text-red-700 transition leading-snug flex-1">
+          {dish.title}
+        </h3>
 
         {/* CENA - NAJWAŻNIEJSZY ELEMENT KARTY (Wyróżnienie Biedronka) */}
         <div className="shrink-0 text-right bg-amber-300/90 border border-amber-400 rounded-2xl px-3 py-2 shadow-xs">
@@ -117,7 +133,7 @@ export default function DishCard({ dish, peopleCount, onSelectDish }) {
           {dish.ingredients.map((ing, idx) => (
             <span
               key={`${ing.productId}_${idx}`}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border whitespace-nowrap shadow-2xs ${
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-bold border whitespace-nowrap shadow-2xs ${
                 ing.metrics.isGazetkaPromo
                   ? 'bg-amber-100 border-amber-300 text-amber-950'
                   : ing.metrics.isFitChoice
@@ -125,10 +141,12 @@ export default function DishCard({ dish, peopleCount, onSelectDish }) {
                   : 'bg-white border-neutral-200 text-neutral-800'
               }`}
             >
-              <FoodIcon
+              <ProductImage
+                productId={ing.productId}
+                name={ing.metrics.name}
                 category={ing.metrics.product?.category || ''}
-                subType={ing.metrics.name}
-                className="w-3.5 h-3.5 opacity-80"
+                className="w-4 h-4 rounded-full"
+                tone={ing.metrics.isGazetkaPromo ? 'promo' : ing.metrics.isFitChoice ? 'fit' : 'default'}
               />
               <span className="truncate max-w-[105px]">
                 {ing.metrics.name.split(' ')[0]}
