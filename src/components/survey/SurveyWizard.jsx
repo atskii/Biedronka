@@ -91,15 +91,8 @@ function PeopleRollerPicker({ value, onChange }) {
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-600/20 rounded-2xl"
+          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-700/20 rounded-2xl"
         >
-          {/* Ramka aktywnej liczby w centrum */}
-          <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-12 rounded-xl bg-red-50/80 pointer-events-none z-10" />
-
-          {/* Maski gradientowe góra i dół */}
-          <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-white via-white/80 to-transparent pointer-events-none z-20" />
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
-
           {/* Taśma rollera */}
           <div
             className="transition-transform duration-250 ease-out will-change-transform"
@@ -116,8 +109,8 @@ function PeopleRollerPicker({ value, onChange }) {
                   onClick={() => onChange(num)}
                   className={`w-full h-12 flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                      ? 'text-3xl font-black text-red-700 scale-105 z-10'
-                      : 'text-lg font-bold text-neutral-400 opacity-40 hover:opacity-75'
+                      ? 'text-4xl font-black text-red-700'
+                      : 'text-lg font-bold text-neutral-300 hover:text-neutral-500'
                   }`}
                   aria-label={`${num}`}
                 >
