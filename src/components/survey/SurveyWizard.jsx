@@ -469,28 +469,29 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between h-full">
-      <div className="flex-1 flex flex-col">
-        {/* Pasek postępu ankiety 1..6 w stylu Stitch */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
-            <span className="text-red-700 uppercase tracking-wider font-extrabold">
-              Krok {step} z 6
-            </span>
-            <span className="font-extrabold text-neutral-800">{Math.round((step / 6) * 100)}%</span>
-          </div>
-          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-red-700 rounded-full transition-all duration-300"
-              style={{ width: `${(step / 6) * 100}%` }}
-            />
-          </div>
+    <div className="flex-1 flex flex-col justify-between h-full min-h-0">
+      {/* Pasek postępu ankiety 1..6 w stylu Stitch */}
+      <div className="shrink-0 mb-3 sm:mb-4">
+        <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
+          <span className="text-red-700 uppercase tracking-wider font-extrabold">
+            Krok {step} z 6
+          </span>
+          <span className="font-extrabold text-neutral-800">{Math.round((step / 6) * 100)}%</span>
         </div>
+        <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-red-700 rounded-full transition-all duration-300"
+            style={{ width: `${(step / 6) * 100}%` }}
+          />
+        </div>
+      </div>
 
+      {/* Przewijany obszar pytania z opcjami (zawsze zostawia miejsce na przyciski na dole) */}
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-0.5 space-y-4">
         {/* KROK 1: Na ile osób? */}
         {step === 1 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               1. Na ile osób przygotować plan?
             </h1>
 
@@ -506,8 +507,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 2: Ile dni? */}
         {step === 2 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               2. Na ile dni chcesz zaplanować posiłki?
             </h1>
 
@@ -526,8 +527,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 3: Jaki budżet? */}
         {step === 3 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               3. Jaki budżet chcesz przeznaczyć?
             </h1>
 
@@ -594,12 +595,12 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 4: Jaka dieta? */}
         {step === 4 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-3 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               4. Jaka dieta Cię interesuje?
             </h1>
 
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-2 pt-1">
               {DIET_OPTIONS.map((option) => {
                 const active = dietType === option.id;
                 return (
@@ -607,22 +608,22 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     key={option.id}
                     type="button"
                     onClick={() => setDietType(option.id)}
-                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between text-left transition active:scale-98 ${
+                    className={`w-full p-3 sm:p-3.5 rounded-2xl border-2 flex items-center justify-between text-left transition active:scale-98 ${
                       active
                         ? 'border-red-600 bg-red-50/70 shadow-sm'
                         : 'border-neutral-200 bg-white hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
+                    <div className="flex items-center gap-3">
                       <FoodIcon
                         category={option.id}
                         className="w-5 h-5 text-neutral-800"
                         withContainer
-                        containerClassName="w-11 h-11 rounded-xl shrink-0"
+                        containerClassName="w-10 h-10 rounded-xl shrink-0"
                         tone={active ? 'crimson' : 'default'}
                       />
                       <div>
-                        <p className="text-base font-extrabold text-neutral-900">
+                        <p className="text-sm sm:text-base font-extrabold text-neutral-900">
                           {option.label}
                         </p>
                         {option.description && (
@@ -633,7 +634,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                       </div>
                     </div>
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2 ${
+                      className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 ${
                         active
                           ? 'bg-red-700 text-white shadow-2xs'
                           : 'border-2 border-neutral-300'
@@ -648,49 +649,24 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           </div>
         )}
 
-        {/* KROK 5: Jaki cel kaloryczny? - Suwak z 2000 kcal na środku */}
+        {/* KROK 5: Jaki cel kaloryczny? - Suwak z 2000 kcal na środku, bez etykiet oceniających */}
         {step === 5 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               5. Jaki jest Twój dzienny cel kaloryczny?
             </h1>
 
             <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
-              <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-1">
-                Dzienny cel kalorii na 1 osobę
+              <span className="text-xs sm:text-sm font-extrabold text-neutral-500 block mb-1">
+                Liczba kalorii dziennie na osobę:
               </span>
 
-              <div className="flex items-baseline gap-2 my-2">
-                <div className="text-3xl sm:text-4xl font-black text-red-700 tracking-tight">
-                  {targetCalories === 'dowolny' ? 'Bez liczenia' : `${targetCalories || 2000} kcal`}
-                </div>
-                {targetCalories !== 'dowolny' && (
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700">
-                    {(targetCalories || 2000) <= 1650
-                      ? 'Redukcja'
-                      : (targetCalories || 2000) <= 1850
-                      ? 'Umiarkowany'
-                      : (targetCalories || 2000) <= 2150
-                      ? 'Standardowy'
-                      : 'Aktywny'}
-                  </span>
-                )}
+              <div className="text-3xl sm:text-4xl font-black text-red-700 my-2 tracking-tight">
+                {targetCalories === 'dowolny' ? 'Bez liczenia kalorii' : `${targetCalories || 2000} kcal`}
               </div>
 
-              <p className="text-xs font-semibold text-neutral-600 mb-4">
-                {targetCalories === 'dowolny'
-                  ? 'Zbilansowane i pełnowartościowe posiłki z oferty Biedronki bez limitu'
-                  : (targetCalories || 2000) <= 1650
-                  ? 'Lekki deficyt kaloryczny sprzyjający zdrowej redukcji wagi'
-                  : (targetCalories || 2000) <= 1850
-                  ? 'Dla osób o umiarkowanej aktywności fizycznej w ciągu dnia'
-                  : (targetCalories || 2000) <= 2150
-                  ? 'Klasyczny, zrównoważony bilans zalecany dla większości osób'
-                  : 'Większe zapotrzebowanie energetyczne dla osób trenujących'}
-              </p>
-
-              {/* Suwak z 2000 kcal dokładnie na środku (1400 .. 2000 .. 2600) */}
-              <div className="relative pt-1 pb-1">
+              {/* Suwak z 2000 kcal na samym środku (1400 .. 2000 .. 2600) */}
+              <div className="pt-2 pb-1">
                 <input
                   type="range"
                   min={1400}
@@ -701,51 +677,45 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                   className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
                 />
 
-                {/* Stopnie kaloryczne na suwaku - 2000 na samym środku */}
-                <div className="flex justify-between text-[11px] font-bold text-neutral-500 mt-2">
-                  <span className="text-left">1400<br/><span className="text-[9px] text-neutral-400 font-normal">Min</span></span>
-                  <span className="text-center">1600<br/><span className="text-[9px] text-neutral-400 font-normal">Redukcja</span></span>
-                  <span className="text-center font-black text-red-700">2000<br/><span className="text-[9px] text-red-600 font-extrabold">Standard</span></span>
-                  <span className="text-center">2400<br/><span className="text-[9px] text-neutral-400 font-normal">Aktywny</span></span>
-                  <span className="text-right">2600<br/><span className="text-[9px] text-neutral-400 font-normal">Max</span></span>
+                {/* Stopnie kaloryczne na suwaku - 2000 na środku, tylko wartości kcal */}
+                <div className="flex justify-between text-[11px] font-bold text-neutral-500 mt-2 px-0.5">
+                  <span>1400 kcal</span>
+                  <span>1600 kcal</span>
+                  <span className="font-black text-red-700">2000 kcal</span>
+                  <span>2400 kcal</span>
+                  <span>2600 kcal</span>
                 </div>
               </div>
 
-              {/* Przyciski szybkich stopni kalorycznych */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
-                {[
-                  { kcal: 1600, label: '1600 kcal', desc: 'Redukcja' },
-                  { kcal: 1800, label: '1800 kcal', desc: 'Umiarkowany' },
-                  { kcal: 2000, label: '2000 kcal', desc: 'Standardowy' },
-                  { kcal: 2400, label: '2400 kcal', desc: 'Aktywny' },
-                ].map((tier) => {
-                  const isSelected = targetCalories === tier.kcal;
+              {/* Przyciski stopni kalorycznych - tylko wartości kcal */}
+              <div className="grid grid-cols-4 gap-1.5 mt-4">
+                {[1600, 1800, 2000, 2400].map((val) => {
+                  const isSelected = targetCalories === val;
                   return (
                     <button
-                      key={tier.kcal}
+                      key={val}
                       type="button"
-                      onClick={() => setTargetCalories(tier.kcal)}
-                      className={`py-2 px-2 rounded-xl border text-center transition ${
+                      onClick={() => setTargetCalories(val)}
+                      className={`py-2 px-1 rounded-xl border text-center transition ${
                         isSelected
-                          ? 'border-red-600 bg-red-50 text-red-700 font-bold'
-                          : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
+                          ? 'border-red-600 bg-red-50 text-red-700 font-black'
+                          : 'border-neutral-200 bg-neutral-50 text-neutral-800 hover:bg-neutral-100 font-bold'
                       }`}
                     >
-                      <p className="text-xs font-black">{tier.label}</p>
-                      <p className="text-[10px] font-semibold text-neutral-500 mt-0.5">{tier.desc}</p>
+                      <p className="text-xs">{val} kcal</p>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Opcja swobodna: Bez liczenia kalorii */}
+              {/* Przycisk: Bez liczenia kalorii */}
               <button
                 type="button"
                 onClick={() => setTargetCalories(targetCalories === 'dowolny' ? 2000 : 'dowolny')}
-                className={`w-full mt-2.5 py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
+                className={`w-full mt-3 py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                   targetCalories === 'dowolny'
-                    ? 'border-red-600 bg-red-50 text-red-700'
-                    : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
+                    ? 'border-red-600 bg-red-50 text-red-700 font-black'
+                    : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-neutral-500" />
@@ -757,8 +727,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 6: Czy chcesz wykluczyć jakieś produkty? */}
         {step === 6 && (
-          <div className="space-y-6 pt-1">
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+          <div className="space-y-4 pt-1">
+            <h1 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
               6. Czy chcesz wykluczyć jakieś produkty?
             </h1>
 
@@ -943,7 +913,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
       </div>
 
       {/* Nawigacja Wstecz / Dalej dla kroków 1..5 oraz Wstecz / Stwórz plan dla kroku 6 */}
-      <div className="shrink-0 pt-3 mt-4 border-t border-neutral-200/80 flex items-center gap-2.5">
+      <div className="shrink-0 pt-2.5 pb-1 border-t border-neutral-200/80 flex items-center gap-2.5 bg-[#FBFBF7]">
         {step > 1 && (
           <button
             type="button"

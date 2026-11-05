@@ -228,9 +228,9 @@ export default function App() {
 
         {/* Główna zawartość mobilna */}
         <main
-          className={`flex-1 px-3 sm:px-4 pt-3 sm:pt-4 ${
+          className={`flex-1 px-3 sm:px-4 pt-2 sm:pt-3 ${
             stage === 'survey'
-              ? 'pb-24 flex flex-col overflow-y-auto overscroll-contain'
+              ? 'pb-20 flex flex-col min-h-0 overflow-hidden'
               : 'pb-20'
           }`}
         >

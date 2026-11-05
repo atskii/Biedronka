@@ -184,7 +184,6 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
       screen.getByText(/5\.\s*Jaki jest Twój dzienny cel kaloryczny\?/i)
     ).toBeInTheDocument();
     expect(screen.getAllByText('2000 kcal').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Standardowy').length).toBeGreaterThan(0);
     expect(screen.getByText(/Bez liczenia kalorii/i)).toBeInTheDocument();
     fireEvent.click(screen.getByText('Dalej'));
 
