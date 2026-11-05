@@ -267,12 +267,29 @@ function RollerPicker({
     touchStartY.current = e.touches[0].clientY;
   };
 
-  const handleTouchEnd = (e) => {
-    const diff = touchStartY.current - e.changedTouches[0].clientY;
-    if (diff > 25) {
+  const handleTouchMove = (e) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    const currentY = e.touches[0].clientY;
+    const diff = touchStartY.current - currentY;
+    if (diff > 30) {
       handleNext();
-    } else if (diff < -25) {
+      touchStartY.current = currentY;
+    } else if (diff < -30) {
       handlePrev();
+      touchStartY.current = currentY;
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      const diff = touchStartY.current - e.changedTouches[0].clientY;
+      if (diff > 15) {
+        handleNext();
+      } else if (diff < -15) {
+        handlePrev();
+      }
     }
   };
 
@@ -290,13 +307,18 @@ function RollerPicker({
   const offsetIndex = currentIndex !== -1 ? currentIndex : 0;
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 flex items-center justify-center gap-4 shadow-xs">
-      <span className="text-xl sm:text-2xl font-extrabold text-neutral-900 select-none">
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      className="bg-white rounded-3xl p-6 sm:p-8 flex items-center justify-center gap-4 shadow-xs touch-none select-none"
+    >
+      <span className="text-xl sm:text-2xl font-extrabold text-neutral-900 select-none pointer-events-none">
         {label}
       </span>
 
       {/* Roller góra-dół */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center touch-none">
         <button
           type="button"
           onClick={handlePrev}
@@ -316,9 +338,7 @@ function RollerPicker({
           aria-label={label.replace(':', '').trim()}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-700/20 rounded-2xl"
+          className="relative w-16 h-[144px] overflow-hidden select-none outline-none focus:ring-2 focus:ring-red-700/20 rounded-2xl touch-none"
         >
           {/* Taśma rollera */}
           <div
@@ -449,8 +469,8 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   }
 
   return (
-    <div className="flex flex-col justify-between min-h-[calc(100vh-150px)]">
-      <div>
+    <div className="flex-1 flex flex-col justify-between h-full">
+      <div className="flex-1 flex flex-col">
         {/* Pasek postępu ankiety 1..6 w stylu Stitch */}
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
@@ -923,7 +943,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
       </div>
 
       {/* Nawigacja Wstecz / Dalej dla kroków 1..5 oraz Wstecz / Stwórz plan dla kroku 6 */}
-      <div className="pt-4 mt-5 border-t border-neutral-200/80 flex items-center gap-2.5">
+      <div className="shrink-0 pt-3 mt-4 border-t border-neutral-200/80 flex items-center gap-2.5">
         {step > 1 && (
           <button
             type="button"
