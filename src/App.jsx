@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  ClipboardList,
-  UtensilsCrossed,
-  ShoppingBasket,
-  QrCode,
-  Sparkles,
-  TrendingDown,
-  Wallet,
-} from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import BiedronkaLogo from './components/common/BiedronkaLogo';
+import BottomNavBar from './components/common/BottomNavBar';
 import SurveyWizard from './components/survey/SurveyWizard';
 import MealPlanView from './components/plan/MealPlanView';
 import ShoppingListView from './components/shopping/ShoppingListView';
@@ -183,176 +176,129 @@ export default function App() {
     setStage('summary');
   };
 
+  const handleSelectStage = (targetStage) => {
+    if (targetStage === 'shopping' && !isTimerRunning && elapsedSeconds === 0) {
+      setElapsedSeconds(1);
+      setIsTimerRunning(true);
+    }
+    if (targetStage === 'summary' && !completedSession) {
+      setCompletedSession({
+        durationSeconds: Math.max(195, elapsedSeconds),
+        finalCostPln: shoppingList.totalBasketCostPln,
+        savedPln: shoppingList.totalBasketSavedPln,
+        loyaltyCardNumber: '6391 0482 9104 7721',
+      });
+    }
+    setStage(targetStage);
+  };
+
   return (
-    <div className="min-h-screen bg-[#FBFBF7] text-neutral-900 font-sans">
-      {/* Górny pasek aplikacji Moja Biedronka w stylu Stitch */}
-      <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800">
-        <div className="max-w-lg mx-auto px-4 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <BiedronkaLogo size="md" />
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base tracking-tight leading-none text-white">
-                  Moja Biedronka
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-[10px] font-black uppercase tracking-wider">
-                  Smart Jadłospis
-                </span>
+    <div className="min-h-screen bg-neutral-200/50 text-neutral-900 font-sans flex justify-center">
+      {/* Kontener mobilny o szerokości dopasowanej do smartfona (max-w-md = 448px) */}
+      <div className="w-full max-w-md min-h-screen bg-[#FBFBF7] relative flex flex-col shadow-2xl">
+        {/* Kompaktowy pasek górny (TopAppBar) w stylu natywnej aplikacji Biedronki */}
+        <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800">
+          <div className="px-3.5 py-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              <BiedronkaLogo size="sm" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-extrabold text-sm sm:text-base tracking-tight leading-none text-white whitespace-nowrap">
+                    Moja Biedronka
+                  </span>
+                  <span className="px-1.5 py-0.2 rounded-md bg-amber-300 text-neutral-950 text-[9px] font-black uppercase tracking-wider whitespace-nowrap">
+                    Smart Jadłospis
+                  </span>
+                </div>
+                <p className="text-[10px] text-red-100 font-medium truncate mt-0.5">
+                  Szybko • Zdrowo • Tanio
+                </p>
               </div>
-              <p className="text-[11px] text-red-100 font-medium">
-                Szybko • Zdrowo • Tanio
-              </p>
             </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsCardModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-amber-300 hover:bg-amber-200 text-neutral-950 font-black text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95"
-          >
-            <QrCode className="w-4 h-4 text-red-700" />
-            <span>Karta</span>
-          </button>
-        </div>
-
-        {/* Pasek szybkiego podglądu etapów */}
-        <div className="bg-red-800/80 border-t border-red-600/30">
-          <div className="max-w-lg mx-auto px-3 py-1.5 grid grid-cols-4 gap-1 text-[11px] font-extrabold">
-            <button
-              type="button"
-              onClick={() => setStage('survey')}
-              className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1 transition ${
-                stage === 'survey'
-                  ? 'bg-white text-red-700 shadow-xs'
-                  : 'text-red-100 hover:bg-red-700/60'
-              }`}
-            >
-              <ClipboardList className="w-3.5 h-3.5" />
-              <span>1. Ankieta</span>
-            </button>
 
             <button
               type="button"
-              onClick={() => setStage('plan')}
-              className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1 transition ${
-                stage === 'plan'
-                  ? 'bg-white text-red-700 shadow-xs'
-                  : 'text-red-100 hover:bg-red-700/60'
-              }`}
+              onClick={() => setIsCardModalOpen(true)}
+              className="shrink-0 px-2.5 py-1.5 rounded-xl bg-amber-300 hover:bg-amber-200 text-neutral-950 font-black text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95 ml-2"
+              aria-label="Otwórz kartę Moja Biedronka"
             >
-              <UtensilsCrossed className="w-3.5 h-3.5" />
-              <span>2. Plan</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (!isTimerRunning && elapsedSeconds === 0) {
-                  setElapsedSeconds(1);
-                  setIsTimerRunning(true);
-                }
-                setStage('shopping');
-              }}
-              className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1 transition ${
-                stage === 'shopping'
-                  ? 'bg-white text-red-700 shadow-xs'
-                  : 'text-red-100 hover:bg-red-700/60'
-              }`}
-            >
-              <ShoppingBasket className="w-3.5 h-3.5" />
-              <span>3. Zakupy</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (!completedSession) {
-                  setCompletedSession({
-                    durationSeconds: Math.max(195, elapsedSeconds),
-                    finalCostPln: shoppingList.totalBasketCostPln,
-                    savedPln: shoppingList.totalBasketSavedPln,
-                    loyaltyCardNumber: '6391 0482 9104 7721',
-                  });
-                }
-                setStage('summary');
-              }}
-              className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1 transition ${
-                stage === 'summary'
-                  ? 'bg-white text-red-700 shadow-xs'
-                  : 'text-red-100 hover:bg-red-700/60'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>4. Czas</span>
+              <QrCode className="w-3.5 h-3.5 text-red-700" />
+              <span>Karta</span>
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Główny kontener mobilny */}
-      <main className="max-w-lg mx-auto px-4 pt-4 pb-10">
-        {stage === 'survey' && (
-          <SurveyWizard
-            initialValues={surveyParams}
-            onCompleteSurvey={handleCompleteSurvey}
-          />
-        )}
+        {/* Główna zawartość mobilna */}
+        <main className="flex-1 px-3 sm:px-4 pt-3 sm:pt-4 pb-20">
+          {stage === 'survey' && (
+            <SurveyWizard
+              initialValues={surveyParams}
+              onCompleteSurvey={handleCompleteSurvey}
+            />
+          )}
 
-        {stage === 'plan' && (
-          <MealPlanView
-            plan={mealPlan}
-            onUpdateBudgetFilter={handleUpdateBudgetFilter}
-            onUpdateDietFilter={handleUpdateDietFilter}
-            onReplaceIngredient={handleReplaceIngredient}
-            onAcceptPlan={handleAcceptPlan}
-            onRestartSurvey={() => setStage('survey')}
-          />
-        )}
+          {stage === 'plan' && (
+            <MealPlanView
+              plan={mealPlan}
+              onUpdateBudgetFilter={handleUpdateBudgetFilter}
+              onUpdateDietFilter={handleUpdateDietFilter}
+              onReplaceIngredient={handleReplaceIngredient}
+              onAcceptPlan={handleAcceptPlan}
+              onRestartSurvey={() => setStage('survey')}
+            />
+          )}
 
-        {stage === 'shopping' && (
-          <ShoppingListView
-            shoppingList={shoppingList}
-            plan={mealPlan}
-            elapsedSeconds={elapsedSeconds}
-            onToggleItemCheck={handleToggleItemCheck}
-            onCheckAllItems={handleCheckAllItems}
-            onReplaceWithAlternative={handleReplaceWithAlternative}
-            onOpenCardScanner={() => setIsCardModalOpen(true)}
-            onBackToPlan={() => setStage('plan')}
-          />
-        )}
+          {stage === 'shopping' && (
+            <ShoppingListView
+              shoppingList={shoppingList}
+              plan={mealPlan}
+              elapsedSeconds={elapsedSeconds}
+              onToggleItemCheck={handleToggleItemCheck}
+              onCheckAllItems={handleCheckAllItems}
+              onReplaceWithAlternative={handleReplaceWithAlternative}
+              onOpenCardScanner={() => setIsCardModalOpen(true)}
+              onBackToPlan={() => setStage('plan')}
+            />
+          )}
 
-        {stage === 'summary' && (
-          <InPostTimeNotification
-            durationSeconds={
-              completedSession?.durationSeconds || Math.max(1, elapsedSeconds)
-            }
-            shoppingList={shoppingList}
-            plan={mealPlan}
-            loyaltyCardNumber={
-              completedSession?.loyaltyCardNumber || '6391 0482 9104 7721'
-            }
-            onBackToShoppingList={() => setStage('shopping')}
-            onCreateNewPlan={() => {
-              setElapsedSeconds(0);
-              setIsTimerRunning(false);
-              setCompletedSession(null);
-              setStage('survey');
-            }}
-          />
-        )}
-      </main>
+          {stage === 'summary' && (
+            <InPostTimeNotification
+              durationSeconds={
+                completedSession?.durationSeconds || Math.max(1, elapsedSeconds)
+              }
+              shoppingList={shoppingList}
+              plan={mealPlan}
+              loyaltyCardNumber={
+                completedSession?.loyaltyCardNumber || '6391 0482 9104 7721'
+              }
+              onBackToShoppingList={() => setStage('shopping')}
+              onCreateNewPlan={() => {
+                setElapsedSeconds(0);
+                setIsTimerRunning(false);
+                setCompletedSession(null);
+                setStage('survey');
+              }}
+            />
+          )}
+        </main>
 
-      {/* Modal skanowania karty Moja Biedronka */}
-      {isCardModalOpen && (
-        <BiedronkaCardModal
-          shoppingList={shoppingList}
-          elapsedSeconds={elapsedSeconds}
-          onClose={() => setIsCardModalOpen(false)}
-          onConfirmPayment={handleConfirmPayment}
+        {/* Dolne mobilne menu (Bottom Navigation Bar) */}
+        <BottomNavBar
+          stage={stage}
+          onSelectStage={handleSelectStage}
+          basketItemsCount={shoppingList.totalItemsCount}
         />
-      )}
+
+        {/* Modal skanowania karty Moja Biedronka */}
+        {isCardModalOpen && (
+          <BiedronkaCardModal
+            shoppingList={shoppingList}
+            elapsedSeconds={elapsedSeconds}
+            onClose={() => setIsCardModalOpen(false)}
+            onConfirmPayment={handleConfirmPayment}
+          />
+        )}
+      </div>
     </div>
   );
 }
-

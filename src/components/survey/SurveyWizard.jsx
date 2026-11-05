@@ -235,18 +235,18 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki tak, aby zmieścić się w wybranej kwocie.
             </p>
 
-            <div className="p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
-              <div className="flex items-baseline justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase text-neutral-500">
+            <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase text-neutral-500">
                   Całkowity budżet na {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} ({peopleCount}{' '}
                   {peopleCount === 1 ? 'os.' : 'os.'})
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-xs font-black">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-[10px] font-black shrink-0">
                   <Tag className="w-3 h-3 text-red-700" /> Gazetka Biedronki
                 </span>
               </div>
 
-              <div className="text-4xl font-black text-red-700 my-2 tracking-tight">
+              <div className="text-3xl sm:text-4xl font-black text-red-700 my-2 tracking-tight">
                 {budgetPln} zł
               </div>
 
@@ -264,7 +264,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
               />
 
-              <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4">
                 {[
                   {
                     label: 'Oszczędny',
@@ -289,15 +289,15 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                       key={preset.label}
                       type="button"
                       onClick={() => setBudgetPln(val)}
-                      className={`p-2.5 rounded-xl border text-center transition ${
+                      className={`p-2 sm:p-2.5 rounded-xl border text-center transition ${
                         isSelected
                           ? 'border-red-600 bg-red-50 text-red-700 font-bold'
                           : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
                       }`}
                     >
-                      <p className="text-xs font-extrabold">{preset.label}</p>
-                      <p className="text-sm font-black mt-0.5">{val} zł</p>
-                      <p className="text-[10px] text-neutral-500">{preset.badge}</p>
+                      <p className="text-[11px] sm:text-xs font-extrabold truncate">{preset.label}</p>
+                      <p className="text-xs sm:text-sm font-black mt-0.5">{val} zł</p>
+                      <p className="text-[9px] sm:text-[10px] text-neutral-500 truncate">{preset.badge}</p>
                     </button>
                   );
                 })}
@@ -457,12 +457,12 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
       </div>
 
       {/* Nawigacja Wstecz / Dalej dla kroków 1..4 */}
-      <div className="pt-6 mt-6 border-t border-neutral-200 flex items-center gap-3">
+      <div className="pt-4 mt-5 border-t border-neutral-200/80 flex items-center gap-2.5">
         {step > 1 && (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="px-5 py-3.5 rounded-2xl bg-white border border-neutral-300 text-neutral-700 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
+            className="px-4 sm:px-5 py-3 rounded-2xl bg-white border border-neutral-300 text-neutral-800 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Wstecz</span>
@@ -473,7 +473,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
-            className="flex-1 py-3.5 px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
+            className="flex-1 py-3 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
           >
             <span>Dalej</span>
             <ChevronRight className="w-4 h-4" />

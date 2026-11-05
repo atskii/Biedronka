@@ -62,7 +62,7 @@ export default function MealPlanView({
   const isWithinBudget = plan.totalCostPln <= plan.budgetPln;
 
   return (
-    <div className="pb-32">
+    <div className="pb-36">
       {/* Karta podsumowania wygenerowanego planu w barwach Biedronki */}
       <div className="bg-gradient-to-br from-red-700 via-red-700 to-red-800 text-white rounded-3xl p-4 shadow-md mb-4 border border-red-800">
         <div className="flex items-start justify-between gap-2 mb-3">
@@ -222,19 +222,19 @@ export default function MealPlanView({
         )}
       </div>
 
-      {/* Przyklejony na dole pasek akcji (Stitch Floating Action Tray) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 p-3 shadow-xl">
-        <div className="max-w-lg mx-auto flex items-center justify-between gap-3">
-          <div>
-            <span className="text-[11px] font-bold text-neutral-500 block">
-              Razem za {plan.daysCount} {plan.daysCount === 1 ? 'dzień' : 'dni'}:
+      {/* Przyklejony nad dolnym menu pasek akcji (Stitch Floating Action Tray) */}
+      <aside className="fixed bottom-16 left-0 right-0 z-40 max-w-md mx-auto px-3 pointer-events-none">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl p-2.5 sm:p-3 shadow-xl flex items-center justify-between gap-2.5">
+          <div className="min-w-0">
+            <span className="text-[10px] font-bold text-neutral-500 block truncate">
+              Razem ({plan.daysCount} {plan.daysCount === 1 ? 'dzień' : 'dni'}):
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xl font-black text-red-700">
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg sm:text-xl font-black text-red-700">
                 {plan.totalCostPln.toFixed(2)} zł
               </span>
               {plan.totalSavedPln > 0 && (
-                <span className="text-xs font-extrabold text-emerald-700">
+                <span className="text-[10px] font-extrabold text-emerald-700 truncate">
                   (-{plan.totalSavedPln.toFixed(2)} zł)
                 </span>
               )}
@@ -244,13 +244,13 @@ export default function MealPlanView({
           <button
             type="button"
             onClick={onAcceptPlan}
-            className="flex-1 py-3.5 px-5 rounded-2xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition"
+            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5 transition"
           >
-            <CheckCircle2 className="w-5 h-5 text-amber-300" />
-            <span>Akceptuj i przejdź do listy zakupów</span>
+            <CheckCircle2 className="w-4 h-4 text-amber-300 shrink-0" />
+            <span className="truncate">Akceptuj i przejdź do listy zakupów</span>
           </button>
         </div>
-      </div>
+      </aside>
 
       {/* Modal modyfikacji składników w kwadratach */}
       {currentlyEditedDish && (

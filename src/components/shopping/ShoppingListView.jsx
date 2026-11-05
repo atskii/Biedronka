@@ -51,7 +51,7 @@ export default function ShoppingListView({
   const [missingModalItem, setMissingModalItem] = useState(null);
 
   return (
-    <div className="pb-36">
+    <div className="pb-44">
       {/* Telemetria trasy w sklepie w stylu Stitch Screen 2 */}
       <div className="bg-white rounded-3xl border border-neutral-200/90 p-4 shadow-sm mb-4">
         <div className="flex items-center justify-between gap-2 mb-3">
@@ -288,18 +288,16 @@ export default function ShoppingListView({
         })}
       </div>
 
-      {/* PASEK POSTĘPU NA DOLE (Stitch Checkout Tray) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 p-3 shadow-2xl">
-        <div className="max-w-lg mx-auto space-y-2.5">
+      {/* PASEK POSTĘPU NAD DOLNYM MENU (Stitch Checkout Tray) */}
+      <aside className="fixed bottom-16 left-0 right-0 z-40 max-w-md mx-auto px-3 pointer-events-none">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl p-3 shadow-xl space-y-2">
           {/* Pasek postępu */}
           <div>
             <div className="flex items-center justify-between text-xs font-bold mb-1">
-              <span className="text-neutral-700">
-                Postęp koszyka: <strong>{shoppingList.checkedItemsCount} z{' '}
-                {shoppingList.totalItemsCount} produktów</strong> (
-                {shoppingList.progressPercent}%)
+              <span className="text-neutral-700 truncate mr-2">
+                Postęp koszyka: <strong>{shoppingList.checkedItemsCount} z {shoppingList.totalItemsCount}</strong> ({shoppingList.progressPercent}%)
               </span>
-              <span className="text-red-700 font-black">
+              <span className="text-red-700 font-black shrink-0">
                 Suma: {shoppingList.totalBasketCostPln.toFixed(2)} zł
               </span>
             </div>
@@ -316,13 +314,13 @@ export default function ShoppingListView({
           <button
             type="button"
             onClick={onOpenCardScanner}
-            className="w-full py-3.5 px-5 rounded-2xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition"
+            className="w-full py-3 px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition"
           >
-            <QrCode className="w-5 h-5 text-amber-300" />
-            <span>Skanuj kartę Moja Biedronka i zakończ zakupy</span>
+            <QrCode className="w-4 h-4 text-amber-300 shrink-0" />
+            <span className="truncate">Skanuj kartę Moja Biedronka i zakończ zakupy</span>
           </button>
         </div>
-      </div>
+      </aside>
 
       {/* Modal wyboru Alternatyw po kliknięciu "Brak produktu" */}
       {missingModalItem && (
