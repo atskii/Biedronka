@@ -155,6 +155,15 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(
       screen.getByText(/3\) Jaki budżet chcesz przeznaczyć\?/i)
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Całkowity budżet na 5 dni dla 4 os\./i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/dziennie na osobę/i)
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByText('Dalej'));
 
     // Krok 4: Jaka dieta?

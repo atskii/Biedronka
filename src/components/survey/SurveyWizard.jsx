@@ -254,35 +254,27 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 3: Jaki budżet? */}
         {step === 3 && (
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
-              <Wallet className="w-3.5 h-3.5" />
-              <span>Pytanie 3 z 5</span>
+          <div className="space-y-6 pt-1">
+            <div>
+              <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+                3) Jaki budżet chcesz przeznaczyć?
+              </h1>
+              <p className="text-sm text-neutral-600 mt-2">
+                Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki tak, aby zmieścić się w wybranej kwocie.
+              </p>
             </div>
-            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
-              3) Jaki budżet chcesz przeznaczyć?
-            </h1>
-            <p className="text-sm text-neutral-600">
-              Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki tak, aby zmieścić się w wybranej kwocie.
-            </p>
 
             <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2">
-                <span className="text-[10px] sm:text-[11px] font-bold uppercase text-neutral-500">
-                  Całkowity budżet na {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} ({peopleCount}{' '}
-                  {peopleCount === 1 ? 'os.' : 'os.'})
-                </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-[10px] font-black shrink-0">
-                  <Tag className="w-3 h-3 text-red-700" /> Gazetka Biedronki
-                </span>
-              </div>
+              <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-1">
+                Całkowity budżet na {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} dla {peopleCount} os.
+              </span>
 
               <div className="text-3xl sm:text-4xl font-black text-red-700 my-2 tracking-tight">
                 {budgetPln} zł
               </div>
 
               <p className="text-xs font-semibold text-neutral-600 mb-4">
-                To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę (za 4 posiłki!)
+                To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę
               </p>
 
               <input
@@ -295,22 +287,19 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
               />
 
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4">
+              <div className="grid grid-cols-3 gap-2 mt-4">
                 {[
                   {
                     label: 'Oszczędny',
                     multiplier: 16,
-                    badge: 'Max Gazetka',
                   },
                   {
                     label: 'Optymalny',
                     multiplier: 23,
-                    badge: 'Polecany',
                   },
                   {
                     label: 'Swobodny',
                     multiplier: 32,
-                    badge: 'Więcej Fit',
                   },
                 ].map((preset) => {
                   const val = Math.round(peopleCount * daysCount * preset.multiplier);
@@ -320,15 +309,14 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                       key={preset.label}
                       type="button"
                       onClick={() => setBudgetPln(val)}
-                      className={`p-2 sm:p-2.5 rounded-xl border text-center transition ${
+                      className={`py-2.5 px-2 rounded-xl border text-center transition ${
                         isSelected
                           ? 'border-red-600 bg-red-50 text-red-700 font-bold'
                           : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
                       }`}
                     >
-                      <p className="text-[11px] sm:text-xs font-extrabold truncate">{preset.label}</p>
+                      <p className="text-xs font-extrabold truncate">{preset.label}</p>
                       <p className="text-xs sm:text-sm font-black mt-0.5">{val} zł</p>
-                      <p className="text-[9px] sm:text-[10px] text-neutral-500 truncate">{preset.badge}</p>
                     </button>
                   );
                 })}
