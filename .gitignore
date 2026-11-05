@@ -46,3 +46,5 @@ Thumbs.db
 # Vercel / Supabase local cache
 .vercel/
 .supabase/
+.vercel
+.env*
