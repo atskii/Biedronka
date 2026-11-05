@@ -179,18 +179,25 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(screen.getByText('Wybór produktów w wariancie bez laktozy lub roślinnych alternatyw')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Dalej'));
 
-    // Krok 5: Czy chcesz wykluczyć jakieś produkty? -> Kliknij TAK, aby przetestować wyszukiwarkę
+    // Krok 5: Czy chcesz wykluczyć jakieś produkty? -> Sprawdź kafelki i kliknij Stwórz plan
     expect(
       screen.getByText(/5\) Czy chcesz wykluczyć jakieś produkty\?/i)
     ).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByText(/TAK – przejdź do wyszukiwarki składników/i)
-    );
-
     expect(
-      screen.getByText(/Wyszukaj produkty do wykluczenia/i)
-    ).toBeInTheDocument();
-    fireEvent.click(screen.getByText(/Generuj jadłospis/i));
+      screen.queryByText(/Jeśli chcesz wykluczyć dane składniki w swoich posiłkach, zaznacz je tutaj\./i)
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('Tak')).toBeInTheDocument();
+    expect(screen.getByText('Nie')).toBeInTheDocument();
+
+    const searchInput = screen.getByPlaceholderText(/Wyszukaj składnik\.\.\./i);
+    expect(searchInput).toBeInTheDocument();
+    fireEvent.click(searchInput);
+
+    // Sprawdź czy kategorie składników są widoczne (np. Pomidor, Twaróg, Mleko)
+    expect(screen.getByText('Pomidor')).toBeInTheDocument();
+    expect(screen.getByText('Twaróg')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Stwórz plan'));
 
     // Widok wygenerowanego planu (4 posiłki: Śniadanie, Obiad, Kolacja, Przekąska)
     expect(

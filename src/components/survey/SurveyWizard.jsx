@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   Users,
   User,
@@ -13,10 +13,192 @@ import {
   ChevronDown,
   Check,
   Tag,
+  X,
+  Apple,
+  Carrot,
+  LeafyGreen,
+  Leaf,
+  Milk,
+  Egg,
+  Drumstick,
+  Beef,
+  Fish,
+  Croissant,
 } from 'lucide-react';
-import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
+import { DIET_OPTIONS, PRODUCTS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
 import FoodIcon from '../common/FoodIcon';
+
+export const EXCLUSION_GROUPS = [
+  {
+    id: 'pomidor',
+    name: 'Pomidor',
+    icon: Apple,
+    productIds: ['pomidory_malinowe', 'pomidory_koktajlowe_promo', 'pomidory_rzymskie'],
+  },
+  {
+    id: 'ogorek',
+    name: 'Ogórek',
+    icon: Carrot,
+    productIds: ['ogorek_zielony_fit'],
+  },
+  {
+    id: 'papryka',
+    name: 'Papryka',
+    icon: Apple,
+    productIds: ['papryka_czerwona_fit'],
+  },
+  {
+    id: 'brokul',
+    name: 'Brokuł',
+    icon: LeafyGreen,
+    productIds: ['brokul_swiezy'],
+  },
+  {
+    id: 'cukinia',
+    name: 'Cukinia',
+    icon: Carrot,
+    productIds: ['cukinia_zielona_promo'],
+  },
+  {
+    id: 'szpinak',
+    name: 'Szpinak',
+    icon: Leaf,
+    productIds: ['szpinak_baby_fit'],
+  },
+  {
+    id: 'salata',
+    name: 'Sałata',
+    icon: Salad,
+    productIds: ['mix_salat_fit'],
+  },
+  {
+    id: 'pieczarki',
+    name: 'Pieczarki',
+    icon: Carrot,
+    productIds: ['pieczarki_swieze'],
+  },
+  {
+    id: 'ziemniaki',
+    name: 'Ziemniaki',
+    icon: Carrot,
+    productIds: ['ziemniaki_mlode_promo', 'bataty_fit'],
+  },
+  {
+    id: 'mleko',
+    name: 'Mleko',
+    icon: Milk,
+    productIds: ['mleko_bez_laktozy_promo', 'napoj_owsiany_govege_fit'],
+  },
+  {
+    id: 'twarog',
+    name: 'Twaróg',
+    icon: Milk,
+    productIds: ['twarog_chudy_fit'],
+  },
+  {
+    id: 'jogurt_skyr',
+    name: 'Jogurt / Skyr',
+    icon: Milk,
+    productIds: [
+      'skyr_naturalny_fit',
+      'jogurt_grecki_promo',
+      'jogurt_kokosowy_govege_fit',
+      'serek_wiejski_lekki_fit',
+    ],
+  },
+  {
+    id: 'ser',
+    name: 'Ser żółty / Mozzarella',
+    icon: Milk,
+    productIds: ['ser_gouda_promo', 'mozzarella_light_fit'],
+  },
+  {
+    id: 'jajka',
+    name: 'Jajka',
+    icon: Egg,
+    productIds: ['jajka_wiejskie_promo'],
+  },
+  {
+    id: 'kurczak',
+    name: 'Kurczak',
+    icon: Drumstick,
+    productIds: [
+      'filet_z_kurczaka_promo',
+      'polędwiczki_z_kurczaka_fit',
+      'kabanosy_drobiowe_promo',
+    ],
+  },
+  {
+    id: 'indyk',
+    name: 'Indyk',
+    icon: Drumstick,
+    productIds: ['mieso_mielone_indyk_fit', 'szynka_z_indyka_fit'],
+  },
+  {
+    id: 'wieprzowina',
+    name: 'Wieprzowina',
+    icon: Beef,
+    productIds: ['mieso_mielone_lopatka_promo', 'szynka_konserwowa_promo'],
+  },
+  {
+    id: 'ryby',
+    name: 'Ryby',
+    icon: Fish,
+    productIds: [
+      'tunczyk_w_sosie_wlasnym_fit',
+      'losos_wedzony_marinero_fit',
+      'makrela_wedzona_promo',
+    ],
+  },
+  {
+    id: 'pieczywo',
+    name: 'Pieczywo',
+    icon: Croissant,
+    productIds: [
+      'chleb_zytni_fit',
+      'bulki_kajzerki_promo',
+      'chleb_proteinowy_fit',
+      'tortilla_pszenna_promo',
+      'wafle_ryzowe_bg_fit',
+      'chleb_bezglutenowy_fit',
+    ],
+  },
+  {
+    id: 'tofu',
+    name: 'Tofu / Hummus',
+    icon: Leaf,
+    productIds: [
+      'tofu_wedzone_govege_fit',
+      'tofu_naturalne_govege_fit',
+      'hummus_klasyczny_govege',
+    ],
+  },
+  {
+    id: 'banany',
+    name: 'Banany',
+    icon: Apple,
+    productIds: ['banany_promo'],
+  },
+  {
+    id: 'jablka',
+    name: 'Jabłka',
+    icon: Apple,
+    productIds: ['jablka_polskie_promo'],
+  },
+  {
+    id: 'borowki',
+    name: 'Borówki',
+    icon: Apple,
+    productIds: ['borowki_fit'],
+  },
+  {
+    id: 'awokado',
+    name: 'Awokado',
+    icon: Apple,
+    productIds: ['awokado_hass_fit'],
+  },
+];
 
 function RollerPicker({
   label,
@@ -157,10 +339,47 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   const [excludedProductIds, setExcludedProductIds] = useState(
     initialValues?.excludedProductIds || []
   );
+  const [exclusionMode, setExclusionMode] = useState(
+    initialValues?.excludedProductIds?.length > 0 ? 'tak' : 'nie'
+  );
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredGroups = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) {
+      return EXCLUSION_GROUPS;
+    }
+    return EXCLUSION_GROUPS.filter((g) =>
+      g.name.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const selectedGroups = useMemo(() => {
+    return EXCLUSION_GROUPS.filter((g) =>
+      g.productIds.some((pid) => excludedProductIds.includes(pid))
+    );
+  }, [excludedProductIds]);
 
   const dailyPerPerson = Number(
     (budgetPln / Math.max(1, peopleCount * daysCount)).toFixed(2)
   );
+
+  const handleToggleGroup = (group) => {
+    const isAllExcluded = group.productIds.every((pid) =>
+      excludedProductIds.includes(pid)
+    );
+    if (isAllExcluded) {
+      setExcludedProductIds((prev) =>
+        prev.filter((pid) => !group.productIds.includes(pid))
+      );
+    } else {
+      setExcludedProductIds((prev) => [
+        ...prev,
+        ...group.productIds.filter((pid) => !prev.includes(pid)),
+      ]);
+    }
+  };
 
   const handleToggleExclude = (productId) => {
     setExcludedProductIds((prev) =>
@@ -383,94 +602,192 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
         {/* KROK 5: Czy chcesz wykluczyć jakieś produkty? */}
         {step === 5 && (
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
-              <Search className="w-3.5 h-3.5" />
-              <span>Pytanie 5 z 5</span>
-            </div>
-            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
+          <div className="space-y-6 pt-1">
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
               5) Czy chcesz wykluczyć jakieś produkty?
             </h1>
-            <p className="text-sm text-neutral-600">
-              Jeśli nie chcesz widzieć wybranych składników w swoich posiłkach, przejdź do wyszukiwarki lub od razu wygeneruj plan.
-            </p>
 
-            {/* Podsumowanie wybranych parametrów 1..4 */}
-            <div className="p-4 rounded-2xl bg-white border border-neutral-200 grid grid-cols-2 gap-3 text-xs shadow-2xs">
-              <div>
-                <span className="text-neutral-500 font-medium">Liczba osób:</span>
-                <p className="font-extrabold text-neutral-900 text-sm">
-                  {peopleCount} {peopleCount === 1 ? 'osoba' : 'os.'}
-                </p>
-              </div>
-              <div>
-                <span className="text-neutral-500 font-medium">Czas planu:</span>
-                <p className="font-extrabold text-neutral-900 text-sm">
-                  {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} (4 posiłki/dzień)
-                </p>
-              </div>
-              <div>
-                <span className="text-neutral-500 font-medium">Budżet:</span>
-                <p className="font-extrabold text-red-700 text-sm">{budgetPln} zł</p>
-              </div>
-              <div>
-                <span className="text-neutral-500 font-medium">Dieta:</span>
-                <p className="font-extrabold text-neutral-900 text-sm">
-                  {DIET_OPTIONS.find((d) => d.id === dietType)?.shortLabel}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 pt-2">
-              {/* TAK -> Idzie do wyszukiwarki */}
-              <button
-                type="button"
-                onClick={() => setShowExclusionSearch(true)}
-                className="w-full p-4 rounded-2xl border-2 border-neutral-900 bg-white hover:bg-neutral-50 text-left flex items-center justify-between transition group active:scale-98 shadow-xs"
+            <div className="space-y-3">
+              {/* Kafelek 1: Tak z wyszukiwarką */}
+              <div
+                className={`w-full p-4 rounded-2xl border-2 transition ${
+                  exclusionMode === 'tak'
+                    ? 'border-red-600 bg-white shadow-sm'
+                    : 'border-neutral-200 bg-white hover:border-neutral-300'
+                }`}
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center text-neutral-900 group-hover:bg-neutral-200 transition">
-                    <Search className="w-6 h-6" />
+                <div
+                  onClick={() => {
+                    setExclusionMode('tak');
+                    setIsSearchOpen(true);
+                  }}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                        exclusionMode === 'tak'
+                          ? 'bg-red-700 text-white shadow-2xs'
+                          : 'border-2 border-neutral-300'
+                      }`}
+                    >
+                      {exclusionMode === 'tak' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
+                    <span className="text-base font-extrabold text-neutral-900">Tak</span>
                   </div>
-                  <div>
-                    <p className="text-base font-extrabold text-neutral-900">
-                      TAK – przejdź do wyszukiwarki składników
-                    </p>
-                    <p className="text-xs text-neutral-600">
-                      Wybierz produkty, które mają zostać pominięte w przepisach
-                    </p>
+                  {selectedGroups.length > 0 && (
+                    <span className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
+                      Wykluczono: {selectedGroups.length}
+                    </span>
+                  )}
+                </div>
+
+                {/* Wyszukiwarka z lupą */}
+                <div className="mt-3">
+                  <div className="relative">
+                    <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onFocus={() => {
+                        setExclusionMode('tak');
+                        setIsSearchOpen(true);
+                      }}
+                      onClick={() => {
+                        setExclusionMode('tak');
+                        setIsSearchOpen(true);
+                      }}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setExclusionMode('tak');
+                        setIsSearchOpen(true);
+                      }}
+                      placeholder="Wyszukaj składnik..."
+                      className="w-full pl-9 pr-8 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-red-600 focus:bg-white transition"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchQuery('');
+                        }}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-neutral-400 hover:text-neutral-600"
+                        aria-label="Wyczyść wyszukiwanie"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:translate-x-0.5 transition" />
-              </button>
 
-              {/* NIE -> Idzie bezpośrednio do generowania */}
+                {/* Rozwijana lista wyników po kliknięciu w wyszukiwarkę */}
+                {isSearchOpen && (
+                  <div className="mt-3 space-y-3 pt-3 border-t border-neutral-100">
+                    {selectedGroups.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mb-1.5">
+                          Wykluczone:
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedGroups.map((group) => {
+                            const IconComponent = group.icon;
+                            return (
+                              <button
+                                key={group.id}
+                                type="button"
+                                onClick={() => handleToggleGroup(group)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition"
+                              >
+                                <IconComponent className="w-3.5 h-3.5 text-red-700" />
+                                <span>{group.name}</span>
+                                <X className="w-3 h-3 ml-0.5" />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1">
+                      {filteredGroups.map((group) => {
+                        const isExcluded = group.productIds.every((pid) =>
+                          excludedProductIds.includes(pid)
+                        );
+                        const IconComponent = group.icon;
+                        return (
+                          <button
+                            key={group.id}
+                            type="button"
+                            onClick={() => handleToggleGroup(group)}
+                            className={`w-full p-2 rounded-xl flex items-center justify-between text-left transition text-xs font-bold ${
+                              isExcluded
+                                ? 'bg-red-50 text-red-700 border border-red-300'
+                                : 'bg-neutral-50 text-neutral-800 hover:bg-neutral-100 border border-neutral-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 truncate">
+                              <div
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                                  isExcluded
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-white border border-neutral-200 text-neutral-600'
+                                }`}
+                              >
+                                <IconComponent className="w-4 h-4" />
+                              </div>
+                              <span className="truncate">{group.name}</span>
+                            </div>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-md shrink-0 ml-2 ${
+                                isExcluded
+                                  ? 'bg-red-600 text-white font-extrabold'
+                                  : 'bg-neutral-200 text-neutral-600'
+                              }`}
+                            >
+                              {isExcluded ? 'Wykluczono' : 'Wyklucz'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Kafelek 2: Nie */}
               <button
                 type="button"
-                onClick={() => triggerGeneration([])}
-                className="w-full p-4 rounded-2xl bg-red-700 hover:bg-red-800 text-white text-left flex items-center justify-between shadow-md transition active:scale-98"
+                onClick={() => {
+                  setExclusionMode('nie');
+                  setExcludedProductIds([]);
+                  setIsSearchOpen(false);
+                }}
+                className={`w-full p-4 rounded-2xl border-2 text-left flex items-center justify-between transition active:scale-98 ${
+                  exclusionMode === 'nie'
+                    ? 'border-red-600 bg-red-50/70 shadow-sm'
+                    : 'border-neutral-200 bg-white hover:border-neutral-300'
+                }`}
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-amber-300">
-                    <Sparkles className="w-6 h-6" />
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                      exclusionMode === 'nie'
+                        ? 'bg-red-700 text-white shadow-2xs'
+                        : 'border-2 border-neutral-300'
+                    }`}
+                  >
+                    {exclusionMode === 'nie' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
-                  <div>
-                    <p className="text-base font-extrabold">
-                      NIE – od razu wygeneruj mój jadłospis
-                    </p>
-                    <p className="text-xs text-red-100">
-                      Uwzględnij wszystkie produkty pasujące do wybranej diety i budżetu
-                    </p>
-                  </div>
+                  <span className="text-base font-extrabold text-neutral-900">Nie</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Nawigacja Wstecz / Dalej dla kroków 1..4 */}
+      {/* Nawigacja Wstecz / Dalej dla kroków 1..4 oraz Wstecz / Stwórz plan dla kroku 5 */}
       <div className="pt-4 mt-5 border-t border-neutral-200/80 flex items-center gap-2.5">
         {step > 1 && (
           <button
@@ -483,7 +800,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           </button>
         )}
 
-        {step < 5 && (
+        {step < 5 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
@@ -491,6 +808,16 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           >
             <span>Dalej</span>
             <ChevronRight className="w-4 h-4" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() =>
+              triggerGeneration(exclusionMode === 'nie' ? [] : excludedProductIds)
+            }
+            className="flex-1 py-3.5 px-5 sm:px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
+          >
+            <span>Stwórz plan</span>
           </button>
         )}
       </div>
