@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { X, CreditCard, CheckCircle2, Sparkles, ShieldCheck } from 'lucide-react';
+import BiedronkaLogo from '../common/BiedronkaLogo';
 
 /**
  * Ekran skanowania karty lojalnościowej Moja Biedronka przy kasie oraz symulacji płatności.
+ * Nowoczesny design Stitch z wektorowym sygnetem marki.
  */
 export default function BiedronkaCardModal({
   shoppingList,
@@ -21,44 +23,44 @@ export default function BiedronkaCardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-neutral-200">
         {/* Górny pasek Moja Biedronka */}
-        <div className="bg-red-600 text-white p-5 relative">
+        <div className="bg-red-700 text-white p-5 relative">
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition"
+            className="absolute right-4 top-4 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition active:scale-95"
             aria-label="Zamknij kartę"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-2.5">
-            <span className="text-3xl">🐞</span>
+          <div className="flex items-center gap-3">
+            <BiedronkaLogo size="lg" />
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300 block">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 block">
                 Kasa Samoobsługowa / Tradycyjna
               </span>
-              <h2 className="text-xl font-black">Twoja Karta Moja Biedronka</h2>
+              <h2 className="text-xl font-black tracking-tight">Twoja Karta Moja Biedronka</h2>
             </div>
           </div>
         </div>
 
         {/* Wirtualna karta z kodem kreskowym */}
         <div className="p-5 space-y-4">
-          <div className="rounded-3xl bg-gradient-to-br from-yellow-300 via-yellow-300 to-amber-300 border-2 border-red-600 p-5 shadow-md text-neutral-900">
+          <div className="rounded-3xl bg-gradient-to-br from-amber-300 via-amber-300 to-yellow-400 border-2 border-red-700 p-5 shadow-sm text-neutral-900">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-black uppercase tracking-wider text-red-700">
+              <span className="text-[11px] font-black uppercase tracking-wider text-red-800">
                 MOJA BIEDRONKA • SMART KOSZYK
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">
+              <span className="px-2.5 py-0.5 rounded-full bg-red-700 text-white text-[10px] font-black">
                 RABATY AKTYWNE
               </span>
             </div>
 
             {/* Wizualizacja kodu kreskowego */}
-            <div className="bg-white rounded-2xl p-4 text-center border border-neutral-200">
+            <div className="bg-white rounded-2xl p-4 text-center border border-neutral-200/80 shadow-2xs">
               <div
                 className="h-16 w-full mx-auto flex items-stretch justify-center gap-[2px] overflow-hidden"
                 aria-hidden="true"
@@ -83,7 +85,7 @@ export default function BiedronkaCardModal({
           </div>
 
           {/* Podsumowanie kwoty i naliczonych promocji */}
-          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-2 text-sm">
+          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80 space-y-2 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-neutral-600 font-semibold">
                 Wartość koszyka z promocjami:
@@ -103,25 +105,25 @@ export default function BiedronkaCardModal({
             type="button"
             disabled={isScanning}
             onClick={handlePayClick}
-            className="w-full py-4 px-6 rounded-2xl bg-red-600 hover:bg-red-700 disabled:opacity-70 text-white font-black text-base shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 transition"
+            className="w-full py-4 px-6 rounded-2xl bg-red-700 hover:bg-red-800 disabled:opacity-70 text-white font-black text-base shadow-md flex items-center justify-center gap-2 transition active:scale-98"
           >
             {isScanning ? (
               <>
-                <Sparkles className="w-5 h-5 text-yellow-300 animate-spin" />
+                <Sparkles className="w-5 h-5 text-amber-300 animate-spin" />
                 <span>Przetwarzanie płatności...</span>
               </>
             ) : (
               <>
-                <CreditCard className="w-5 h-5 text-yellow-300" />
+                <CreditCard className="w-5 h-5 text-amber-300" />
                 <span>Zeskanuj kartę i zapłać</span>
               </>
             )}
           </button>
 
-          <p className="text-[11px] text-center text-neutral-500 flex items-center justify-center gap-1">
+          <p className="text-[11px] text-center text-neutral-500 flex items-center justify-center gap-1.5 font-medium">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>
-              Po płatności otrzymasz powiadomienie z czasem zakupów!
+              Po płatności otrzymasz podsumowanie czasu zakupów w stylu InPost!
             </span>
           </p>
         </div>
@@ -129,4 +131,3 @@ export default function BiedronkaCardModal({
     </div>
   );
 }
-

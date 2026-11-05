@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Wallet, Salad, Flame, Search, SlidersHorizontal, X } from 'lucide-react';
 import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
+import FoodIcon from '../common/FoodIcon';
 
 export default function FilterBar({
   budgetPln,
@@ -151,7 +152,7 @@ export default function FilterBar({
                   : 'border-neutral-200 bg-neutral-50 text-neutral-800 hover:bg-neutral-100'
               }`}
             >
-              <span>{opt.emoji}</span>
+              <FoodIcon category={opt.id} className="w-3.5 h-3.5 shrink-0" />
               <span>{opt.shortLabel}</span>
             </button>
           ))}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Users,
+  User,
   Calendar,
   Wallet,
   Salad,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
+import FoodIcon from '../common/FoodIcon';
 
 export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   const [step, setStep] = useState(1);
@@ -62,17 +64,17 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   return (
     <div className="flex flex-col justify-between min-h-[calc(100vh-150px)]">
       <div>
-        {/* Pasek postępu ankiety 1..5 */}
+        {/* Pasek postępu ankiety 1..5 w stylu Stitch */}
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
-            <span className="text-red-600 uppercase tracking-wider">
+            <span className="text-red-700 uppercase tracking-wider font-extrabold">
               Ankieta do planu • Krok {step} z 5
             </span>
-            <span>{Math.round((step / 5) * 100)}%</span>
+            <span className="font-extrabold text-neutral-800">{Math.round((step / 5) * 100)}%</span>
           </div>
-          <div className="w-full h-2.5 bg-neutral-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-red-600 to-yellow-400 rounded-full transition-all duration-300"
+              className="h-full bg-red-700 rounded-full transition-all duration-300"
               style={{ width: `${(step / 5) * 100}%` }}
             />
           </div>
@@ -81,43 +83,56 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 1: Na ile osób? */}
         {step === 1 && (
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-              <Users className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
+              <Users className="w-3.5 h-3.5" />
               <span>Pytanie 1 z 5</span>
             </div>
-            <h1 className="text-2xl font-black text-neutral-900">
+            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
               1) Na ile osób przygotować plan?
             </h1>
             <p className="text-sm text-neutral-600">
-              automatycznie dopasujemy gramatury przepisów oraz liczbę opakowań na liście zakupów.
+              Automatycznie dopasujemy gramatury przepisów oraz liczbę opakowań na liście zakupów.
             </p>
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               {[
-                { count: 1, label: '1 osoba', desc: 'Singiel / porcje indywidualne', emoji: '🧑' },
-                { count: 2, label: '2 osoby', desc: 'Para lub dwie osoby', emoji: '👫' },
-                { count: 3, label: '3 osoby', desc: 'Trzyosobowe gospodarstwo', emoji: '👨‍👩‍👦' },
-                { count: 4, label: '4 osoby', desc: 'Pełny obiad dla czterech osób', emoji: '👨‍👩‍👧‍👦' },
+                { count: 1, label: '1 osoba', desc: 'Singiel / porcje indywidualne', icon: User },
+                { count: 2, label: '2 osoby', desc: 'Para lub dwie osoby', icon: Users },
+                { count: 3, label: '3 osoby', desc: 'Trzyosobowe gospodarstwo', icon: Users },
+                { count: 4, label: '4 osoby', desc: 'Pełny obiad dla czterech osób', icon: Users },
               ].map((item) => {
                 const active = peopleCount === item.count;
+                const IconComponent = item.icon;
                 return (
                   <button
                     key={item.count}
                     type="button"
                     onClick={() => setPeopleCount(item.count)}
-                    className={`p-4 rounded-2xl border-2 text-left transition ${
+                    className={`p-4 rounded-2xl border-2 text-left transition relative active:scale-98 ${
                       active
-                        ? 'border-red-600 bg-red-50/70 shadow-md shadow-red-600/10'
+                        ? 'border-red-600 bg-red-50/70 shadow-sm'
                         : 'border-neutral-200 bg-white hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-3xl">{item.emoji}</span>
-                      {active && (
-                        <span className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center">
-                          <Check className="w-3.5 h-3.5" />
-                        </span>
-                      )}
+                    <div className="flex items-center justify-between mb-3">
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          active
+                            ? 'bg-red-700 text-white'
+                            : 'bg-neutral-100 text-neutral-700'
+                        }`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                          active
+                            ? 'bg-red-700 text-white shadow-2xs'
+                            : 'border-2 border-neutral-300'
+                        }`}
+                      >
+                        {active && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </div>
                     </div>
                     <p className="text-base font-extrabold text-neutral-900">
                       {item.label}
@@ -128,13 +143,13 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               })}
             </div>
 
-            {/* Dodatkowy suwak dla 5-6 osób */}
-            <div className="p-4 rounded-2xl bg-white border border-neutral-200 flex items-center justify-between">
+            {/* Dodatkowy selektor dla 5-6 osób */}
+            <div className="p-4 rounded-2xl bg-white border border-neutral-200/90 flex items-center justify-between shadow-2xs">
               <div>
-                <p className="text-xs font-bold text-neutral-500 uppercase">
+                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
                   Dowolna liczba osób (1–6)
                 </p>
-                <p className="text-sm font-bold text-neutral-900">
+                <p className="text-sm font-extrabold text-neutral-900 mt-0.5">
                   Wybrano: {peopleCount} {peopleCount === 1 ? 'osoba' : peopleCount < 5 ? 'osoby' : 'osób'}
                 </p>
               </div>
@@ -142,15 +157,17 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 <button
                   type="button"
                   onClick={() => setPeopleCount((c) => Math.max(1, c - 1))}
-                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg"
+                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg text-neutral-800 transition active:scale-95"
+                  aria-label="Zmniejsz liczbę osób"
                 >
                   -
                 </button>
-                <span className="w-8 text-center font-black text-lg">{peopleCount}</span>
+                <span className="w-8 text-center font-black text-lg text-neutral-900">{peopleCount}</span>
                 <button
                   type="button"
                   onClick={() => setPeopleCount((c) => Math.min(6, c + 1))}
-                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg"
+                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg text-neutral-800 transition active:scale-95"
+                  aria-label="Zwiększ liczbę osób"
                 >
                   +
                 </button>
@@ -162,11 +179,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 2: Ile dni? */}
         {step === 2 && (
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-              <Calendar className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
+              <Calendar className="w-3.5 h-3.5" />
               <span>Pytanie 2 z 5</span>
             </div>
-            <h1 className="text-2xl font-black text-neutral-900">
+            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
               2) Na ile dni chcesz zaplanować posiłki?
             </h1>
             <p className="text-sm text-neutral-600">
@@ -182,12 +199,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     type="button"
                     onClick={() => {
                       setDaysCount(d);
-                      // Proporcjonalnie dopasuj domyślny budżet
                       setBudgetPln(Math.round(d * peopleCount * 22));
                     }}
-                    className={`p-4 rounded-2xl border-2 text-center transition ${
+                    className={`p-4 rounded-2xl border-2 text-center transition active:scale-98 ${
                       active
-                        ? 'border-red-600 bg-red-50 font-black text-red-700 shadow-sm'
+                        ? 'border-red-600 bg-red-50/70 font-black text-red-700 shadow-sm'
                         : 'border-neutral-200 bg-white text-neutral-800 hover:border-neutral-300'
                     }`}
                   >
@@ -208,29 +224,29 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 3: Jaki budżet? */}
         {step === 3 && (
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-              <Wallet className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
+              <Wallet className="w-3.5 h-3.5" />
               <span>Pytanie 3 z 5</span>
             </div>
-            <h1 className="text-2xl font-black text-neutral-900">
+            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
               3) Jaki budżet chcesz przeznaczyć?
             </h1>
             <p className="text-sm text-neutral-600">
               Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki tak, aby zmieścić się w wybranej kwocie.
             </p>
 
-            <div className="p-5 rounded-3xl bg-white border-2 border-yellow-400 shadow-sm">
+            <div className="p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
               <div className="flex items-baseline justify-between mb-2">
-                <span className="text-xs font-bold uppercase text-neutral-500">
+                <span className="text-[11px] font-bold uppercase text-neutral-500">
                   Całkowity budżet na {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} ({peopleCount}{' '}
                   {peopleCount === 1 ? 'os.' : 'os.'})
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-300 text-neutral-900 text-xs font-extrabold">
-                  <Tag className="w-3 h-3" /> Gazetka Biedronki
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-300 text-neutral-950 text-xs font-black">
+                  <Tag className="w-3 h-3 text-red-700" /> Gazetka Biedronki
                 </span>
               </div>
 
-              <div className="text-4xl font-black text-red-600 my-2">
+              <div className="text-4xl font-black text-red-700 my-2 tracking-tight">
                 {budgetPln} zł
               </div>
 
@@ -245,7 +261,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 step={5}
                 value={budgetPln}
                 onChange={(e) => setBudgetPln(Number(e.target.value))}
-                className="w-full accent-red-600 cursor-pointer h-2 bg-neutral-200 rounded-lg"
+                className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
               />
 
               <div className="grid grid-cols-3 gap-2 mt-4">
@@ -293,11 +309,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 4: Jaka dieta? */}
         {step === 4 && (
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-              <Salad className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
+              <Salad className="w-3.5 h-3.5" />
               <span>Pytanie 4 z 5</span>
             </div>
-            <h1 className="text-2xl font-black text-neutral-900">
+            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
               4) Jaka dieta Cię interesuje?
             </h1>
             <p className="text-sm text-neutral-600">
@@ -312,14 +328,20 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     key={option.id}
                     type="button"
                     onClick={() => setDietType(option.id)}
-                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between text-left transition ${
+                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between text-left transition active:scale-98 ${
                       active
                         ? 'border-red-600 bg-red-50/70 shadow-sm'
                         : 'border-neutral-200 bg-white hover:border-neutral-300'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <span className="text-3xl">{option.emoji}</span>
+                      <FoodIcon
+                        category={option.id}
+                        className="w-5 h-5 text-neutral-800"
+                        withContainer
+                        containerClassName="w-11 h-11 rounded-xl shrink-0"
+                        tone={active ? 'crimson' : 'default'}
+                      />
                       <div>
                         <p className="text-base font-extrabold text-neutral-900">
                           {option.label}
@@ -332,11 +354,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     <div
                       className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2 ${
                         active
-                          ? 'bg-red-600 text-white'
+                          ? 'bg-red-700 text-white shadow-2xs'
                           : 'border-2 border-neutral-300'
                       }`}
                     >
-                      {active && <Check className="w-3.5 h-3.5" />}
+                      {active && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                     </div>
                   </button>
                 );
@@ -348,11 +370,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 5: Czy chcesz wykluczyć jakieś produkty? */}
         {step === 5 && (
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-              <Search className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-extrabold border border-red-200">
+              <Search className="w-3.5 h-3.5" />
               <span>Pytanie 5 z 5</span>
             </div>
-            <h1 className="text-2xl font-black text-neutral-900">
+            <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
               5) Czy chcesz wykluczyć jakieś produkty?
             </h1>
             <p className="text-sm text-neutral-600">
@@ -360,25 +382,25 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
             </p>
 
             {/* Podsumowanie wybranych parametrów 1..4 */}
-            <div className="p-4 rounded-2xl bg-white border border-neutral-200 grid grid-cols-2 gap-3 text-xs">
+            <div className="p-4 rounded-2xl bg-white border border-neutral-200 grid grid-cols-2 gap-3 text-xs shadow-2xs">
               <div>
-                <span className="text-neutral-500">Liczba osób:</span>
+                <span className="text-neutral-500 font-medium">Liczba osób:</span>
                 <p className="font-extrabold text-neutral-900 text-sm">
                   {peopleCount} {peopleCount === 1 ? 'osoba' : 'os.'}
                 </p>
               </div>
               <div>
-                <span className="text-neutral-500">Czas planu:</span>
+                <span className="text-neutral-500 font-medium">Czas planu:</span>
                 <p className="font-extrabold text-neutral-900 text-sm">
                   {daysCount} {daysCount === 1 ? 'dzień' : 'dni'} (4 posiłki/dzień)
                 </p>
               </div>
               <div>
-                <span className="text-neutral-500">Budżet:</span>
-                <p className="font-extrabold text-red-600 text-sm">{budgetPln} zł</p>
+                <span className="text-neutral-500 font-medium">Budżet:</span>
+                <p className="font-extrabold text-red-700 text-sm">{budgetPln} zł</p>
               </div>
               <div>
-                <span className="text-neutral-500">Dieta:</span>
+                <span className="text-neutral-500 font-medium">Dieta:</span>
                 <p className="font-extrabold text-neutral-900 text-sm">
                   {DIET_OPTIONS.find((d) => d.id === dietType)?.shortLabel}
                 </p>
@@ -390,7 +412,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               <button
                 type="button"
                 onClick={() => setShowExclusionSearch(true)}
-                className="w-full p-4 rounded-2xl border-2 border-neutral-900 bg-white hover:bg-neutral-50 text-left flex items-center justify-between transition group"
+                className="w-full p-4 rounded-2xl border-2 border-neutral-900 bg-white hover:bg-neutral-50 text-left flex items-center justify-between transition group active:scale-98 shadow-xs"
               >
                 <div className="flex items-center gap-3.5">
                   <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center text-neutral-900 group-hover:bg-neutral-200 transition">
@@ -405,17 +427,17 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-400" />
+                <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:translate-x-0.5 transition" />
               </button>
 
               {/* NIE -> Idzie bezpośrednio do generowania */}
               <button
                 type="button"
                 onClick={() => triggerGeneration([])}
-                className="w-full p-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-left flex items-center justify-between shadow-lg shadow-red-600/25 transition"
+                className="w-full p-4 rounded-2xl bg-red-700 hover:bg-red-800 text-white text-left flex items-center justify-between shadow-md transition active:scale-98"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-yellow-300">
+                  <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-amber-300">
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <div>
@@ -440,7 +462,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="px-4 py-3.5 rounded-2xl bg-white border border-neutral-300 text-neutral-700 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition"
+            className="px-5 py-3.5 rounded-2xl bg-white border border-neutral-300 text-neutral-700 font-bold text-sm flex items-center gap-1.5 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Wstecz</span>
@@ -451,7 +473,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
-            className="flex-1 py-3.5 px-6 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md shadow-red-600/20 transition"
+            className="flex-1 py-3.5 px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-98"
           >
             <span>Dalej</span>
             <ChevronRight className="w-4 h-4" />
@@ -461,4 +483,3 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
     </div>
   );
 }
-

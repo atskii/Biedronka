@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, X, CheckCircle2, ArrowLeft, Sparkles, Ban } from 'lucide-react';
 import { PRODUCTS, STORE_AISLES } from '../../data/biedronkaCatalog';
+import FoodIcon from '../common/FoodIcon';
 
 export default function ExclusionSearch({
   excludedProductIds = [],
@@ -43,16 +44,16 @@ export default function ExclusionSearch({
           <button
             type="button"
             onClick={onBack}
-            className="p-2 rounded-xl bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition"
+            className="p-2.5 rounded-xl bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition active:scale-95 shadow-2xs"
             aria-label="Wróć do ankiety"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-red-600">
+            <span className="text-[10px] font-black uppercase tracking-wider text-red-700">
               Krok 5 z 5 • Wykluczenia
             </span>
-            <h2 className="text-xl font-extrabold text-neutral-900">
+            <h2 className="text-xl font-extrabold text-neutral-900 tracking-tight">
               Wyszukaj produkty do wykluczenia
             </h2>
           </div>
@@ -70,7 +71,7 @@ export default function ExclusionSearch({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Wpisz nazwę produktu (np. pieczarki, tuńczyk, brokuł)..."
-            className="w-full pl-11 pr-10 py-3.5 bg-white border-2 border-neutral-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-red-600 transition"
+            className="w-full pl-11 pr-10 py-3.5 bg-white border border-neutral-300 rounded-2xl text-sm font-medium focus:outline-none focus:border-red-600 transition shadow-2xs"
           />
           {searchQuery && (
             <button
@@ -100,11 +101,15 @@ export default function ExclusionSearch({
                   onClick={() => onToggleExclude(prodId)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition ${
                     isExcluded
-                      ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                      ? 'bg-red-700 text-white border-red-700 shadow-sm'
                       : 'bg-white text-neutral-700 border-neutral-200 hover:border-red-300'
                   }`}
                 >
-                  <span>{prod.emoji}</span>
+                  <FoodIcon
+                    category={prod.category}
+                    subType={prod.name}
+                    className="w-3.5 h-3.5 opacity-80"
+                  />
                   <span>{prod.name.split(' ')[0]}</span>
                   {isExcluded && <X className="w-3.5 h-3.5" />}
                 </button>
@@ -131,13 +136,14 @@ export default function ExclusionSearch({
               key={aisle.id}
               type="button"
               onClick={() => setSelectedAisle(aisle.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ${
                 selectedAisle === aisle.id
                   ? 'bg-neutral-900 text-white'
                   : 'bg-white text-neutral-600 border border-neutral-200'
               }`}
             >
-              {aisle.emoji} {aisle.name}
+              <FoodIcon category={aisle.id} className="w-3.5 h-3.5" />
+              <span>{aisle.name}</span>
             </button>
           ))}
         </div>
@@ -158,10 +164,11 @@ export default function ExclusionSearch({
                   <span
                     key={id}
                     onClick={() => onToggleExclude(id)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-red-300 text-xs font-semibold text-red-700 cursor-pointer hover:bg-red-100"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-red-300 text-xs font-semibold text-red-700 cursor-pointer hover:bg-red-100 transition"
                   >
-                    {p.emoji} {p.name}
-                    <X className="w-3.5 h-3.5" />
+                    <FoodIcon category={p.category} subType={p.name} className="w-3.5 h-3.5" />
+                    <span>{p.name}</span>
+                    <X className="w-3.5 h-3.5 text-red-600" />
                   </span>
                 );
               })}
@@ -185,7 +192,14 @@ export default function ExclusionSearch({
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-2xl shrink-0">{product.emoji}</span>
+                  <FoodIcon
+                    category={product.category}
+                    subType={product.name}
+                    className="w-5 h-5 text-neutral-800"
+                    withContainer
+                    containerClassName="w-9 h-9 rounded-xl shrink-0"
+                    tone={isExcluded ? 'crimson' : 'default'}
+                  />
                   <div className="min-w-0">
                     <p
                       className={`text-sm font-bold truncate ${
@@ -201,7 +215,7 @@ export default function ExclusionSearch({
                 </div>
                 <div className="shrink-0 ml-2">
                   {isExcluded ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-600 text-white text-xs font-bold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-700 text-white text-xs font-bold">
                       <Ban className="w-3.5 h-3.5" /> Wykluczono
                     </span>
                   ) : (
@@ -221,9 +235,9 @@ export default function ExclusionSearch({
         <button
           type="button"
           onClick={onConfirmAndGenerate}
-          className="w-full py-4 px-6 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-extrabold text-base shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 transition"
+          className="w-full py-4 px-6 rounded-2xl bg-red-700 hover:bg-red-800 active:scale-[0.98] text-white font-extrabold text-base shadow-md flex items-center justify-center gap-2 transition"
         >
-          <Sparkles className="w-5 h-5 text-yellow-300" />
+          <Sparkles className="w-5 h-5 text-amber-300" />
           <span>
             Generuj jadłospis{' '}
             {excludedProductIds.length > 0
@@ -235,4 +249,3 @@ export default function ExclusionSearch({
     </div>
   );
 }
-
