@@ -38,7 +38,7 @@ export default function DishModificationModal({
     : [];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-neutral-200">
         
         {/* ========================================================
@@ -356,11 +356,11 @@ export default function DishModificationModal({
             </div>
 
             {/* Stopka modala */}
-            <div className="p-4 border-t border-neutral-200 bg-white shrink-0">
+            <div className="p-4 pb-6 sm:pb-4 border-t border-neutral-200 bg-white shrink-0">
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full py-3.5 px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition active:scale-98 shadow-sm"
+                className="w-full py-3.5 px-6 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition active:scale-98 shadow-sm cursor-pointer"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
                 <span>Gotowe</span>

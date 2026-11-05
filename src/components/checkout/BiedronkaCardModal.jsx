@@ -23,7 +23,7 @@ export default function BiedronkaCardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-neutral-200">
         {/* Górny pasek Moja Biedronka */}
         <div className="bg-red-700 text-white p-5 relative">

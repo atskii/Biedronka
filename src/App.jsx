@@ -137,15 +137,23 @@ export default function App() {
     }));
   };
 
-  // Zaznaczenie wszystkich produktów na liście
+  // Zaznaczenie / odznaczenie wszystkich produktów na liście
   const handleCheckAllItems = () => {
-    const nextMap = {};
-    shoppingList.sections.forEach((sec) => {
-      sec.items.forEach((item) => {
-        nextMap[item.productId] = true;
+    const isAllChecked =
+      shoppingList.checkedItemsCount === shoppingList.totalItemsCount &&
+      shoppingList.totalItemsCount > 0;
+
+    if (isAllChecked) {
+      setCheckedItemsMap({});
+    } else {
+      const nextMap = {};
+      shoppingList.sections.forEach((sec) => {
+        sec.items.forEach((item) => {
+          nextMap[item.productId] = true;
+        });
       });
-    });
-    setCheckedItemsMap(nextMap);
+      setCheckedItemsMap(nextMap);
+    }
   };
 
   // Podmiana brakującego produktu w sklepie na wybraną "Alternatywę"

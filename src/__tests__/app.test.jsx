@@ -216,6 +216,18 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Owoce i warzywa')).toBeInTheDocument();
 
+    // Test przycisku Zaznacz wszystko / Odznacz wszystko
+    const toggleCheckAllBtn = screen.getByRole('button', { name: /Zaznacz wszystko/i });
+    expect(toggleCheckAllBtn).toBeInTheDocument();
+    fireEvent.click(toggleCheckAllBtn);
+
+    // Po zaznaczeniu wszystkich przycisk powinien zmienić się na "Odznacz wszystko"
+    expect(screen.getByRole('button', { name: /Odznacz wszystko/i })).toBeInTheDocument();
+
+    // Kliknięcie odznacza wszystkie produkty
+    fireEvent.click(screen.getByRole('button', { name: /Odznacz wszystko/i }));
+    expect(screen.getByRole('button', { name: /Zaznacz wszystko/i })).toBeInTheDocument();
+
     // Kliknij "Brak produktu", aby otworzyć "Alternatywy"
     const missingButtons = screen.getAllByText('Brak produktu');
     fireEvent.click(missingButtons[0]);
