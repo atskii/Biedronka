@@ -1475,38 +1475,6 @@ export const RECIPES = [
 
   // ==================== OBIADY ====================
   {
-    id: 'obiad_kurczak_pieczone_ziemniaki_brokul',
-    title: 'Soczysty filet z kurczaka z młodymi ziemniakami i brokułem na parze',
-    mealType: 'obiad',
-    prepTimeMinutes: 30,
-    prepTimeLabel: '30m',
-    dietTags: ['nie_vege', 'bez_glutenu', 'bez_laktozy'],
-    emoji: '🍗',
-    description: 'Najpopularniejszy obiad w budżecie promocyjnym – pełen białka i witamin z gazetki.',
-    ingredients: [
-      { productId: 'filet_z_kurczaka_promo', portionGrams: 200, displayAmount: '200 g filetu' },
-      { productId: 'ziemniaki_mlode_promo', portionGrams: 300, displayAmount: '300 g' },
-      { productId: 'brokul_swiezy', portionGrams: 200, displayAmount: '2/5 główki' },
-      { productId: 'pomidory_malinowe', portionGrams: 120, displayAmount: '1 szt.' },
-    ],
-  },
-  {
-    id: 'obiad_tortilla_indyk_warzywa',
-    title: 'Pełnoziarniste wrapy z mielonym indykiem, papryką i sosem jogurtowym',
-    mealType: 'obiad',
-    prepTimeMinutes: 25,
-    prepTimeLabel: '25m',
-    dietTags: ['nie_vege'],
-    emoji: '🌯',
-    description: 'Szybki obiad na patelnię w 25 minut, idealny również do zabrania w pudełku na wynos.',
-    ingredients: [
-      { productId: 'mieso_mielone_indyk_fit', portionGrams: 180, displayAmount: '180 g mięsa' },
-      { productId: 'tortilla_pszenna_promo', portionGrams: 120, displayAmount: '2 placki' },
-      { productId: 'papryka_czerwona_fit', portionGrams: 120, displayAmount: '1 szt.' },
-      { productId: 'skyr_naturalny_fit', portionGrams: 90, displayAmount: '3 łyżki na sos' },
-    ],
-  },
-  {
     id: 'obiad_zapiekanka_ziemniaki_mieso_dluga',
     title: 'Domowa zapiekanka ziemniaczana z mięsem, pieczarkami i mozzarellą',
     mealType: 'obiad',
@@ -1554,40 +1522,8 @@ export const RECIPES = [
       { productId: 'pomidory_koktajlowe_promo', portionGrams: 120, displayAmount: 'garść' },
     ],
   },
-  {
-    id: 'obiad_vege_zapiekanka_warzywna_2h',
-    title: 'Wolno pieczona zapiekanka warzywna z ziemniakami, brokułem i tofu',
-    mealType: 'obiad',
-    prepTimeMinutes: 120,
-    prepTimeLabel: '2h',
-    dietTags: ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'],
-    emoji: '🍲',
-    description: 'Pełnowartościowe danie pieczone przez 2h dla maksymalnej głębi smaku przy minimalnym koszcie.',
-    ingredients: [
-      { productId: 'ziemniaki_mlode_promo', portionGrams: 350, displayAmount: '350 g' },
-      { productId: 'brokul_swiezy', portionGrams: 220, displayAmount: '220 g' },
-      { productId: 'tofu_naturalne_govege_fit', portionGrams: 180, displayAmount: '1 kostka' },
-      { productId: 'cukinia_zielona_promo', portionGrams: 180, displayAmount: '180 g' },
-    ],
-  },
 
   // ==================== KOLACJE ====================
-  {
-    id: 'kolacja_salatka_losos_awokado',
-    title: 'Sałatka Vital Fresh z wędzonym łososiem Marinero, awokado i grzankami',
-    mealType: 'kolacja',
-    prepTimeMinutes: 15,
-    prepTimeLabel: '15m',
-    dietTags: ['nie_vege', 'bez_glutenu', 'bez_laktozy'],
-    emoji: '🥗',
-    description: 'Lekka, bogata w kwasy Omega-3 kolacja gotowa w kwadrans.',
-    ingredients: [
-      { productId: 'losos_wedzony_marinero_fit', portionGrams: 100, displayAmount: '1 opak.' },
-      { productId: 'mix_salat_fit', portionGrams: 80, displayAmount: '1/2 opak.' },
-      { productId: 'awokado_hass_fit', portionGrams: 80, displayAmount: '1/2 szt.' },
-      { productId: 'wafle_ryzowe_bg_fit', portionGrams: 40, displayAmount: '4 szt.' },
-    ],
-  },
   {
     id: 'kolacja_tortilla_mozzarella_szpinak',
     title: 'Chrupiąca quesadilla na patelni z mozzarellą light, szpinakiem i pomidorem',
@@ -1634,22 +1570,6 @@ export const RECIPES = [
       { productId: 'pomidory_koktajlowe_promo', portionGrams: 125, displayAmount: '1/2 opak.' },
       { productId: 'chleb_proteinowy_fit', portionGrams: 80, displayAmount: '2 kromki' },
       { productId: 'ogorek_zielony_fit', portionGrams: 100, displayAmount: '1/3 szt.' },
-    ],
-  },
-  {
-    id: 'kolacja_wrap_hummus_warzywa_fit',
-    title: 'Chrupiący wrap z hummusem GoVege, cukinią i mixem sałat',
-    mealType: 'kolacja',
-    prepTimeMinutes: 10,
-    prepTimeLabel: '10m',
-    dietTags: ['nie_vege', 'vege', 'bez_laktozy'],
-    emoji: '🌯',
-    description: 'Złocista tortilla z hummusem, grillowaną cukinią i świeżym mixem sałat bez pomidorów.',
-    ingredients: [
-      { productId: 'tortilla_pszenna_promo', portionGrams: 120, displayAmount: '2 placki' },
-      { productId: 'hummus_klasyczny_govege', portionGrams: 80, displayAmount: '1/2 opak.' },
-      { productId: 'cukinia_zielona_promo', portionGrams: 100, displayAmount: 'kilka plastrów' },
-      { productId: 'mix_salat_fit', portionGrams: 50, displayAmount: 'duża garść' },
     ],
   },
 

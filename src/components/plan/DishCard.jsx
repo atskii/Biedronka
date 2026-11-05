@@ -29,17 +29,18 @@ export default function DishCard({ dish, peopleCount, onSelectDish }) {
       }}
       className="bg-white rounded-3xl border border-neutral-200/90 hover:border-red-600 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
     >
-      {/* Zdjęcie potrawy z nakładkami statusu i czasem przygotowania */}
-      <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden mb-3 border border-neutral-100/90 shadow-2xs">
+      {/* Zdjęcie potrawy w proporcji kwadratu 1:1 (cały talerz widoczny z zaokrąglonymi rogami) */}
+      <div className="relative w-full aspect-square rounded-2xl overflow-hidden mb-3 border border-neutral-100 shadow-2xs bg-white">
         <DishImage
           recipeId={dish.recipeId}
           mealType={dish.slotId || dish.mealType}
           title={dish.title}
           className="w-full h-full"
+          imgClassName="object-cover"
         />
 
-        {/* Delikatny gradient dla kontrastu nakładek */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/35 pointer-events-none" />
+        {/* Subtelny gradient u samej góry dla czytelności plakietek bez zaciemniania talerza */}
+        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/25 to-transparent pointer-events-none" />
 
         {/* Plakietki na zdjęciu: Slot posiłku + Czas przygotowania */}
         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
