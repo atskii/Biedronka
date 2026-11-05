@@ -81,36 +81,43 @@ export default function MealPlanView({
           </button>
         </div>
 
-        {/* 3 minimalistyczne wskaźniki: Łączna cena, Oszczędzasz, Makrosy / dzień */}
-        <div className="grid grid-cols-3 gap-2 bg-black/20 rounded-2xl p-3 border border-white/10">
-          <div>
+        {/* 2 główne kwoty: Łączna cena i Oszczędzasz (nigdy nie łamią linii) */}
+        <div className="grid grid-cols-2 gap-2.5 mb-2.5">
+          <div className="bg-black/20 rounded-2xl p-3 border border-white/10">
             <span className="text-[10px] font-bold uppercase tracking-wider text-red-100/80 block">
               Łączna cena
             </span>
-            <p className="text-xl font-black text-amber-300 leading-tight mt-0.5">
+            <p className="text-xl sm:text-2xl font-black text-amber-300 leading-tight mt-0.5 whitespace-nowrap">
               {plan.totalCostPln.toFixed(2)} zł
             </p>
           </div>
 
-          <div className="border-x border-white/15 px-2">
+          <div className="bg-black/20 rounded-2xl p-3 border border-white/10">
             <span className="text-[10px] font-bold uppercase tracking-wider text-red-100/80 block">
               Oszczędzasz
             </span>
-            <p className="text-xl font-black text-white leading-tight mt-0.5">
+            <p className="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5 whitespace-nowrap">
               {plan.totalSavedPln.toFixed(2)} zł
             </p>
           </div>
+        </div>
 
+        {/* Pasek makro per dzień - pełna szerokość, responsywny na każdym telefonie */}
+        <div className="bg-black/20 rounded-2xl p-2.5 px-3 border border-white/10 flex items-center justify-between gap-2 text-xs">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-red-100/80 block">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-red-100/80 block leading-tight">
               Średnio / dzień
             </span>
-            <p className="text-base font-black text-white leading-tight mt-0.5">
+            <p className="text-sm font-black text-white leading-tight mt-0.5">
               {plan.avgDailyKcalPerPerson} kcal
             </p>
-            <p className="text-[10px] text-red-100/80 font-semibold mt-0.5 whitespace-nowrap">
-              W:{plan.avgDailyMacros.carbs}g • B:{plan.avgDailyMacros.protein}g • T:{plan.avgDailyMacros.fat}g
-            </p>
+          </div>
+          <div className="text-right text-[11px] font-bold text-red-100/90 flex items-center gap-1.5 flex-wrap justify-end">
+            <span>W: {plan.avgDailyMacros.carbs}g</span>
+            <span className="opacity-50">•</span>
+            <span>B: {plan.avgDailyMacros.protein}g</span>
+            <span className="opacity-50">•</span>
+            <span>T: {plan.avgDailyMacros.fat}g</span>
           </div>
         </div>
       </div>
@@ -152,13 +159,7 @@ export default function MealPlanView({
         })}
       </div>
 
-      {/* Wskazówka o modyfikacji w kwadratach */}
-      <div className="mb-3 px-3.5 py-2.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center gap-2.5 text-xs font-semibold text-neutral-800">
-        <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
-        <span>
-          Kliknij na dowolną potrawę, aby zobaczyć składniki w kwadratach i wymienić je na zamienniki z gazetki (żółte) lub Fit!
-        </span>
-      </div>
+
 
       {/* Lista 4 posiłków wybranego dnia (Śniadanie, Obiad, Kolacja, Przekąska) */}
       <div className="space-y-3">
