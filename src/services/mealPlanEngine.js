@@ -46,12 +46,19 @@ export function calculateIngredientMetrics(productId, portionGrams, peopleCount 
   const ratioPer100g = portionGrams / 100;
   const packageFraction = Math.max(0.15, portionGrams / product.packageWeightG);
 
-  const singlePortionPromoCost = Number((product.pricePromo * packageFraction).toFixed(2));
+  const isPromo = Boolean(product.isGazetkaPromo && product.pricePromo < product.priceRegular);
   const singlePortionRegularCost = Number((product.priceRegular * packageFraction).toFixed(2));
+  const singlePortionPromoCost = isPromo
+    ? Number((product.pricePromo * packageFraction).toFixed(2))
+    : singlePortionRegularCost;
 
-  const totalPromoCost = Number((singlePortionPromoCost * peopleCount).toFixed(2));
   const totalRegularCost = Number((singlePortionRegularCost * peopleCount).toFixed(2));
-  const savedCost = Number(Math.max(0, totalRegularCost - totalPromoCost).toFixed(2));
+  const totalPromoCost = isPromo
+    ? Number((singlePortionPromoCost * peopleCount).toFixed(2))
+    : totalRegularCost;
+  const savedCost = isPromo
+    ? Number(Math.max(0, totalRegularCost - totalPromoCost).toFixed(2))
+    : 0;
 
   const kcalPerPerson = Math.round(product.kcalPer100g * ratioPer100g);
   const carbsPerPerson = Number((product.carbs * ratioPer100g).toFixed(1));

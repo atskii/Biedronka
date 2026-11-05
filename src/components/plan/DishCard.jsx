@@ -14,6 +14,8 @@ import DishImage from '../common/DishImage';
  * - Składniki w kwadratach (zastępuje emotki zdjęciami produktów i ikonami)
  */
 export default function DishCard({ dish, peopleCount, onSelectDish }) {
+  const hasPromo = dish.gazetkaCount > 0 && dish.savedPln > 0;
+
   return (
     <div
       onClick={() => onSelectDish(dish)}
@@ -69,21 +71,39 @@ export default function DishCard({ dish, peopleCount, onSelectDish }) {
           {dish.title}
         </h3>
 
-        {/* CENA - NAJWAŻNIEJSZY ELEMENT KARTY (Wyróżnienie Biedronka) */}
-        <div className="shrink-0 text-right bg-amber-300/90 border border-amber-400 rounded-2xl px-3 py-2 shadow-xs">
-          <span className="block text-[9px] font-black uppercase tracking-wider text-red-800">
+        {/* CENA - Wyróżnienie Biedronka na żółto tylko dla produktów z gazetki */}
+        <div
+          className={`shrink-0 text-right rounded-2xl px-3 py-2 shadow-xs border ${
+            hasPromo
+              ? 'bg-amber-300 border-amber-400'
+              : 'bg-neutral-100 border-neutral-200/90'
+          }`}
+        >
+          <span
+            className={`block text-[9px] font-black uppercase tracking-wider ${
+              hasPromo ? 'text-red-800' : 'text-neutral-500'
+            }`}
+          >
             CENA ({peopleCount} {peopleCount === 1 ? 'os.' : 'os.'})
           </span>
-          <span className="block text-xl font-black text-red-700 leading-none mt-0.5">
+          <span
+            className={`block text-xl font-black leading-none mt-0.5 ${
+              hasPromo ? 'text-red-700' : 'text-neutral-900'
+            }`}
+          >
             {dish.totalGroupPrice.toFixed(2)} zł
           </span>
-          {dish.savedPln > 0 && (
+          {hasPromo && (
             <span className="block text-[10px] font-bold text-neutral-700 line-through mt-0.5">
               {dish.totalGroupRegularPrice.toFixed(2)} zł
             </span>
           )}
           {peopleCount > 1 && (
-            <span className="block text-[10px] font-extrabold text-neutral-900 mt-0.5">
+            <span
+              className={`block text-[10px] mt-0.5 ${
+                hasPromo ? 'font-extrabold text-neutral-900' : 'font-bold text-neutral-600'
+              }`}
+            >
               {dish.singlePortionPrice.toFixed(2)} zł / porcja
             </span>
           )}

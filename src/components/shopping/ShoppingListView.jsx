@@ -232,9 +232,20 @@ export default function ShoppingListView({
 
                     {/* Prawa strona: Cena + Przycisk "Brak produktu" -> "Alternatywy" */}
                     <div className="shrink-0 flex flex-col items-end gap-1.5">
-                      <span className="text-base font-black text-red-700">
+                      <span
+                        className={`text-base font-black ${
+                          item.product.isGazetkaPromo && item.totalSavedPln > 0
+                            ? 'text-red-700'
+                            : 'text-neutral-900'
+                        }`}
+                      >
                         {item.totalCostPln.toFixed(2)} zł
                       </span>
+                      {item.product.isGazetkaPromo && item.totalSavedPln > 0 && (
+                        <span className="text-[11px] font-bold text-neutral-500 line-through">
+                          {item.totalRegularCostPln.toFixed(2)} zł
+                        </span>
+                      )}
 
                       <button
                         type="button"

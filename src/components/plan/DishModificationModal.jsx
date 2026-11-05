@@ -190,9 +190,18 @@ export default function DishModificationModal({
                         </div>
 
                         <div className="shrink-0 text-right">
-                          <p className="text-base font-black text-red-700">
+                          <p
+                            className={`text-base font-black ${
+                              isPromo && sub.metrics.savedCost > 0 ? 'text-red-700' : 'text-neutral-900'
+                            }`}
+                          >
                             {sub.metrics.totalPromoCost.toFixed(2)} zł
                           </p>
+                          {isPromo && sub.metrics.savedCost > 0 && (
+                            <p className="text-[10px] font-bold text-neutral-500 line-through">
+                              {sub.metrics.totalRegularCost.toFixed(2)} zł
+                            </p>
+                          )}
                           <p
                             className={`text-[11px] font-extrabold ${
                               sub.priceDiffGroup <= 0
@@ -259,7 +268,13 @@ export default function DishModificationModal({
             {/* Pasek podsumowania Ceny i Makro potrawy */}
             <div className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between gap-2 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 rounded-xl bg-amber-300 border border-amber-400 text-red-800 font-black text-base shadow-xs">
+                <div
+                  className={`px-3 py-1.5 rounded-xl font-black text-base shadow-xs border ${
+                    dish.gazetkaCount > 0 && dish.savedPln > 0
+                      ? 'bg-amber-300 border-amber-400 text-red-800'
+                      : 'bg-neutral-200/80 border-neutral-300 text-neutral-900'
+                  }`}
+                >
                   {dish.totalGroupPrice.toFixed(2)} zł
                 </div>
                 <div className="text-xs">
@@ -337,9 +352,18 @@ export default function DishModificationModal({
                       {/* Cena + Kalorie + wskaźnik Zmień */}
                       <div className="pt-2 border-t border-black/10 flex items-center justify-between gap-1 w-full">
                         <div>
-                          <span className="block text-xs font-black text-red-700 leading-tight">
+                          <span
+                            className={`block text-xs font-black leading-tight ${
+                              isPromo && ing.metrics.savedCost > 0 ? 'text-red-700' : 'text-neutral-900'
+                            }`}
+                          >
                             {ing.metrics.totalPromoCost.toFixed(2)} zł
                           </span>
+                          {isPromo && ing.metrics.savedCost > 0 && (
+                            <span className="block text-[10px] font-bold text-neutral-500 line-through leading-tight">
+                              {ing.metrics.totalRegularCost.toFixed(2)} zł
+                            </span>
+                          )}
                           <span className="block text-[10px] font-bold text-neutral-600 leading-tight">
                             {ing.metrics.kcalPerPerson} kcal
                           </span>
