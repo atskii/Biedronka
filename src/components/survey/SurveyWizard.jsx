@@ -417,7 +417,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-bold text-neutral-500 mb-2">
             <span className="text-red-700 uppercase tracking-wider font-extrabold">
-              Ankieta do planu • Krok {step} z 5
+              Krok {step} z 5
             </span>
             <span className="font-extrabold text-neutral-800">{Math.round((step / 5) * 100)}%</span>
           </div>
@@ -449,14 +449,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 2: Ile dni? */}
         {step === 2 && (
           <div className="space-y-6 pt-1">
-            <div>
-              <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-                2) Na ile dni chcesz zaplanować posiłki?
-              </h1>
-              <p className="text-sm text-neutral-600 mt-2">
-                Na każdy dzień znajdziemy dla Ciebie 4 posiłki: śniadanie, obiad, kolacje i przekąskę.
-              </p>
-            </div>
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+              2) Na ile dni chcesz zaplanować posiłki?
+            </h1>
 
             <RollerPicker
               label="Liczba dni:"
@@ -474,14 +469,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
         {/* KROK 3: Jaki budżet? */}
         {step === 3 && (
           <div className="space-y-6 pt-1">
-            <div>
-              <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
-                3) Jaki budżet chcesz przeznaczyć?
-              </h1>
-              <p className="text-sm text-neutral-600 mt-2">
-                Dobierzemy produkty z aktualnej oferty promocyjnej Biedronki tak, aby zmieścić się w wybranej kwocie.
-              </p>
-            </div>
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">
+              3) Jaki budżet chcesz przeznaczyć?
+            </h1>
 
             <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
               <span className="text-xs sm:text-sm font-extrabold text-neutral-600 block mb-1">
