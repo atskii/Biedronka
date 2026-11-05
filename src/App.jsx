@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { QrCode } from 'lucide-react';
-import BiedronkaLogo from './components/common/BiedronkaLogo';
 import BottomNavBar from './components/common/BottomNavBar';
 import SurveyWizard from './components/survey/SurveyWizard';
 import MealPlanView from './components/plan/MealPlanView';
@@ -196,35 +194,26 @@ export default function App() {
     <div className="min-h-screen bg-neutral-200/50 text-neutral-900 font-sans flex justify-center">
       {/* Kontener mobilny o szerokości dopasowanej do smartfona (max-w-md = 448px) */}
       <div className="w-full max-w-md min-h-screen bg-[#FBFBF7] relative flex flex-col shadow-2xl">
-        {/* Kompaktowy pasek górny (TopAppBar) w stylu natywnej aplikacji Biedronki */}
+        {/* Kompaktowy pasek górny (TopAppBar) */}
         <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800">
-          <div className="px-3.5 py-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-2 min-w-0">
-              <BiedronkaLogo size="sm" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-extrabold text-sm sm:text-base tracking-tight leading-none text-white whitespace-nowrap">
-                    Moja Biedronka
-                  </span>
-                  <span className="px-1.5 py-0.2 rounded-md bg-amber-300 text-neutral-950 text-[9px] font-black uppercase tracking-wider whitespace-nowrap">
-                    Smart Jadłospis
-                  </span>
-                </div>
-                <p className="text-[10px] text-red-100 font-medium truncate mt-0.5">
-                  Szybko • Zdrowo • Tanio
-                </p>
-              </div>
-            </div>
+          <div className="px-4 py-3 flex items-center justify-between">
+            <span className="font-bold text-[15px] sm:text-[17px] tracking-tight text-white">
+              mojeZaradneZakupy
+            </span>
 
-            <button
-              type="button"
-              onClick={() => setIsCardModalOpen(true)}
-              className="shrink-0 px-2.5 py-1.5 rounded-xl bg-amber-300 hover:bg-amber-200 text-neutral-950 font-black text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95 ml-2"
-              aria-label="Otwórz kartę Moja Biedronka"
+            {/* Czarne kropki jak u biedronki po prawej stronie */}
+            <svg
+              className="w-14 h-6 text-neutral-950 shrink-0 pointer-events-none select-none opacity-90"
+              viewBox="0 0 56 24"
+              fill="currentColor"
+              aria-hidden="true"
             >
-              <QrCode className="w-3.5 h-3.5 text-red-700" />
-              <span>Karta</span>
-            </button>
+              <circle cx="8" cy="14" r="3.5" />
+              <circle cx="20" cy="7" r="2.8" />
+              <circle cx="32" cy="15" r="4" />
+              <circle cx="44" cy="8" r="3.2" />
+              <circle cx="51" cy="16" r="2.2" />
+            </svg>
           </div>
         </header>
 
