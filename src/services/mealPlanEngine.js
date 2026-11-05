@@ -1,4 +1,4 @@
-import { PRODUCTS, RECIPES, STORE_AISLES, MEAL_TYPES } from '../data/biedronkaCatalog';
+import { PRODUCTS, RECIPES, STORE_AISLES, MEAL_TYPES } from '../data/biedronkaCatalog.js';
 
 /**
  * Oblicza cenę, kalorie oraz makroskładniki dla pojedynczego składnika w potrawie.
@@ -133,17 +133,20 @@ export function getIngredientSubstitutesForDish(
   const currentMetrics = calculateIngredientMetrics(currentProductId, portionGrams, peopleCount);
   const excludedSet = new Set(excludedProductIds);
 
-  // Zbierz dedykowane zamienniki oraz produkty z tego samego działu pasujące do diety
+  // Zbierz dedykowane zamienniki kulinarne oraz alternatywy
   const candidateIds = new Set([
     ...(currentProduct.substitutes || []),
     ...(currentProduct.alternatives || []),
   ]);
 
-  Object.values(PRODUCTS).forEach((prod) => {
-    if (prod.aisleCategory === currentProduct.aisleCategory && prod.id !== currentProductId) {
-      candidateIds.add(prod.id);
-    }
-  });
+  // Tylko w sytuacji awaryjnej (gdy produkt nie ma zdefiniowanych zamienników), sięgaj do tego samego działu
+  if (candidateIds.size === 0) {
+    Object.values(PRODUCTS).forEach((prod) => {
+      if (prod.aisleCategory === currentProduct.aisleCategory && prod.id !== currentProductId) {
+        candidateIds.add(prod.id);
+      }
+    });
+  }
 
   const substitutes = [];
   candidateIds.forEach((candId) => {
@@ -395,57 +398,7 @@ export function generateMealPlan({
     days,
   });
 
-  // Optymalizacja budżetowa: jeśli plan przekracza budżet klienta, automatycznie wybierz tańsze zamienniki z gazetki
-  if (initialPlan.totalCostPln > budgetPln) {
-    const optimizedDays = initialPlan.days.map((day) => ({
-      ...day,
-      meals: day.meals.map((meal) => {
-        const optimizedIngredients = meal.ingredients.map((ing) => {
-          const subs = getIngredientSubstitutesForDish(
-            ing.productId,
-            ing.portionGrams,
-            peopleCount,
-            dietType,
-            excludedProductIds
-          );
-          const cheaperPromoSub = subs.find(
-            (s) => s.isGazetkaPromo && s.priceDiffGroup < 0
-          );
-          if (cheaperPromoSub) {
-            return {
-              productId: cheaperPromoSub.product.id,
-              portionGrams: ing.portionGrams,
-              displayAmount: ing.displayAmount,
-            };
-          }
-          return {
-            productId: ing.productId,
-            portionGrams: ing.portionGrams,
-            displayAmount: ing.displayAmount,
-          };
-        });
-
-        const baseRecipe = RECIPES.find((r) => r.id === meal.recipeId) || meal;
-        const recalculated = calculateDishMetrics(
-          baseRecipe,
-          optimizedIngredients,
-          peopleCount
-        );
-        return {
-          ...recalculated,
-          slotId: meal.slotId,
-          slotLabel: meal.slotLabel,
-          slotEmoji: meal.slotEmoji,
-        };
-      }),
-    }));
-
-    initialPlan = recalculatePlanTotals({
-      ...initialPlan,
-      days: optimizedDays,
-    });
-  }
-
+  // Zwróć wygenerowany plan z autentycznymi składnikami dopasowanymi do potraw
   return initialPlan;
 }
 
