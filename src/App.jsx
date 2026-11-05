@@ -195,25 +195,20 @@ export default function App() {
       {/* Kontener mobilny o szerokości dopasowanej do smartfona (max-w-md = 448px) */}
       <div className="w-full max-w-md min-h-screen bg-[#FBFBF7] relative flex flex-col shadow-2xl">
         {/* Kompaktowy pasek górny (TopAppBar) */}
-        <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800">
-          <div className="px-4 py-3 flex items-center justify-between">
-            <span className="font-bold text-[15px] sm:text-[17px] tracking-tight text-white">
-              mojeZaradneZakupy
+        <header className="sticky top-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800 relative overflow-hidden">
+          <div className="px-4 py-3 flex items-center justify-between relative z-10">
+            <span className="font-black text-lg sm:text-xl tracking-tight text-white">
+              Biedronka
             </span>
+          </div>
 
-            {/* Czarne kropki jak u biedronki po prawej stronie */}
-            <svg
-              className="w-14 h-6 text-neutral-950 shrink-0 pointer-events-none select-none opacity-90"
-              viewBox="0 0 56 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <circle cx="8" cy="14" r="3.5" />
-              <circle cx="20" cy="7" r="2.8" />
-              <circle cx="32" cy="15" r="4" />
-              <circle cx="44" cy="8" r="3.2" />
-              <circle cx="51" cy="16" r="2.2" />
-            </svg>
+          {/* Czarne kropki biedronki o różnych wielkościach wychodzące poza ekran */}
+          <div className="absolute right-0 top-0 bottom-0 w-36 pointer-events-none select-none overflow-hidden" aria-hidden="true">
+            <span className="absolute -right-4 -top-4 w-12 h-12 rounded-full bg-neutral-950/90 shadow-2xs" />
+            <span className="absolute -right-2 -bottom-4 w-9 h-9 rounded-full bg-neutral-950/90 shadow-2xs" />
+            <span className="absolute right-10 top-1.5 w-6 h-6 rounded-full bg-neutral-950/90 shadow-2xs" />
+            <span className="absolute right-18 bottom-1 w-4 h-4 rounded-full bg-neutral-950/90 shadow-2xs" />
+            <span className="absolute right-26 top-3.5 w-2.5 h-2.5 rounded-full bg-neutral-950/90 shadow-2xs" />
           </div>
         </header>
 
