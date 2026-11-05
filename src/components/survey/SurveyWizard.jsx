@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Users,
   User,
@@ -9,12 +9,190 @@ import {
   Sparkles,
   ChevronRight,
   ChevronLeft,
+  ChevronUp,
+  ChevronDown,
   Check,
   Tag,
 } from 'lucide-react';
 import { DIET_OPTIONS } from '../../data/biedronkaCatalog';
 import ExclusionSearch from './ExclusionSearch';
 import FoodIcon from '../common/FoodIcon';
+
+const ROLLER_PEOPLE_OPTIONS = [
+  { count: 1, label: '1 osoba', desc: 'Singiel • porcje indywidualne' },
+  { count: 2, label: '2 osoby', desc: 'Dla pary lub 2 współlokatorów' },
+  { count: 3, label: '3 osoby', desc: 'Trzyosobowe gospodarstwo' },
+  { count: 4, label: '4 osoby', desc: 'Pełny obiad dla 4 osób' },
+  { count: 5, label: '5 osób', desc: 'Większa grupa (5 osób)' },
+  { count: 6, label: '6 osób', desc: 'Duża grupa (6 osób)' },
+];
+
+function PeopleRollerPicker({ value, onChange }) {
+  const touchStartY = useRef(0);
+  const ITEM_HEIGHT = 56; // wysokość slotu w px
+
+  const handlePrev = () => {
+    onChange(Math.max(1, value - 1));
+  };
+
+  const handleNext = () => {
+    onChange(Math.min(6, value + 1));
+  };
+
+  const handleWheel = (e) => {
+    if (Math.abs(e.deltaY) < 15) return;
+    if (e.deltaY > 0) {
+      handleNext();
+    } else {
+      handlePrev();
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e) => {
+    const diff = touchStartY.current - e.changedTouches[0].clientY;
+    if (diff > 25) {
+      handleNext();
+    } else if (diff < -25) {
+      handlePrev();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      handlePrev();
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      handleNext();
+    }
+  };
+
+  const activeOption =
+    ROLLER_PEOPLE_OPTIONS.find((o) => o.count === value) || ROLLER_PEOPLE_OPTIONS[1];
+
+  return (
+    <div className="bg-white rounded-3xl border border-neutral-200/90 p-4 sm:p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-500">
+          Wybór liczby osób (1–6)
+        </span>
+        <span className="text-[10px] font-black text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+          Roller góra-dół
+        </span>
+      </div>
+
+      {/* Kontener pola wyboru typu roller */}
+      <div
+        tabIndex={0}
+        role="spinbutton"
+        aria-valuenow={value}
+        aria-valuemin={1}
+        aria-valuemax={6}
+        aria-label="Pole wyboru liczby osób od 1 do 6"
+        onKeyDown={handleKeyDown}
+        onWheel={handleWheel}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="relative select-none outline-none focus:ring-2 focus:ring-red-600/30 rounded-2xl"
+      >
+        {/* Przycisk góra */}
+        <button
+          type="button"
+          onClick={handlePrev}
+          disabled={value <= 1}
+          className="w-full py-1.5 flex items-center justify-center text-neutral-400 hover:text-red-700 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer active:scale-95"
+          aria-label="Przewiń w górę (mniej osób)"
+        >
+          <ChevronUp className="w-5 h-5 stroke-[2.5]" />
+        </button>
+
+        {/* Okno wizjera rollera */}
+        <div className="relative h-[168px] overflow-hidden my-0.5">
+          {/* Aktywny wskaźnik wyboru w centrum */}
+          <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-14 rounded-2xl bg-red-50/85 border-2 border-red-600 pointer-events-none z-10 shadow-xs" />
+
+          {/* Gradienty cylindryczne góra i dół */}
+          <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-white via-white/80 to-transparent pointer-events-none z-20" />
+          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
+
+          {/* Przesuwna taśma rollera */}
+          <div
+            className="transition-transform duration-300 ease-out will-change-transform"
+            style={{
+              transform: `translateY(${(1 - (value - 1)) * ITEM_HEIGHT}px)`,
+            }}
+          >
+            {ROLLER_PEOPLE_OPTIONS.map((item) => {
+              const isSelected = item.count === value;
+              const IconComp = item.count === 1 ? User : Users;
+              return (
+                <button
+                  type="button"
+                  key={item.count}
+                  onClick={() => onChange(item.count)}
+                  className={`w-full h-14 flex items-center justify-center gap-3 transition-all duration-200 cursor-pointer ${
+                    isSelected
+                      ? 'text-red-700 font-black scale-100 opacity-100 z-10'
+                      : 'text-neutral-400 font-bold scale-90 opacity-40 hover:opacity-75'
+                  }`}
+                  aria-label={`${item.label}`}
+                >
+                  <IconComp
+                    className={`w-5 h-5 ${
+                      isSelected ? 'text-red-700 stroke-[2.5]' : 'text-neutral-400'
+                    }`}
+                  />
+                  <span
+                    className={`tracking-tight ${
+                      isSelected ? 'text-2xl font-black' : 'text-lg font-bold'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Przycisk dół */}
+        <button
+          type="button"
+          onClick={handleNext}
+          disabled={value >= 6}
+          className="w-full py-1.5 flex items-center justify-center text-neutral-400 hover:text-red-700 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer active:scale-95"
+          aria-label="Przewiń w dół (więcej osób)"
+        >
+          <ChevronDown className="w-5 h-5 stroke-[2.5]" />
+        </button>
+      </div>
+
+      {/* Podsumowanie wybranego wariantu */}
+      <div className="mt-3 p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-300 text-neutral-950 flex items-center justify-center font-black text-lg shadow-xs">
+            {value}
+          </div>
+          <div>
+            <p className="text-sm font-extrabold text-neutral-900">
+              {activeOption.label}
+            </p>
+            <p className="text-xs text-neutral-500 font-medium">
+              {activeOption.desc}
+            </p>
+          </div>
+        </div>
+        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+          Rolka 1–6
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   const [step, setStep] = useState(1);
@@ -94,85 +272,10 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               Automatycznie dopasujemy gramatury przepisów oraz liczbę opakowań na liście zakupów.
             </p>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {[
-                { count: 1, label: '1 osoba', desc: 'Singiel / porcje indywidualne', icon: User },
-                { count: 2, label: '2 osoby', desc: 'Para lub dwie osoby', icon: Users },
-                { count: 3, label: '3 osoby', desc: 'Trzyosobowe gospodarstwo', icon: Users },
-                { count: 4, label: '4 osoby', desc: 'Pełny obiad dla czterech osób', icon: Users },
-              ].map((item) => {
-                const active = peopleCount === item.count;
-                const IconComponent = item.icon;
-                return (
-                  <button
-                    key={item.count}
-                    type="button"
-                    onClick={() => setPeopleCount(item.count)}
-                    className={`p-4 rounded-2xl border-2 text-left transition relative active:scale-98 ${
-                      active
-                        ? 'border-red-600 bg-red-50/70 shadow-sm'
-                        : 'border-neutral-200 bg-white hover:border-neutral-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          active
-                            ? 'bg-red-700 text-white'
-                            : 'bg-neutral-100 text-neutral-700'
-                        }`}
-                      >
-                        <IconComponent className="w-5 h-5" />
-                      </div>
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                          active
-                            ? 'bg-red-700 text-white shadow-2xs'
-                            : 'border-2 border-neutral-300'
-                        }`}
-                      >
-                        {active && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </div>
-                    </div>
-                    <p className="text-base font-extrabold text-neutral-900">
-                      {item.label}
-                    </p>
-                    <p className="text-xs text-neutral-500 mt-0.5">{item.desc}</p>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Dodatkowy selektor dla 5-6 osób */}
-            <div className="p-4 rounded-2xl bg-white border border-neutral-200/90 flex items-center justify-between shadow-2xs">
-              <div>
-                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
-                  Dowolna liczba osób (1–6)
-                </p>
-                <p className="text-sm font-extrabold text-neutral-900 mt-0.5">
-                  Wybrano: {peopleCount} {peopleCount === 1 ? 'osoba' : peopleCount < 5 ? 'osoby' : 'osób'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPeopleCount((c) => Math.max(1, c - 1))}
-                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg text-neutral-800 transition active:scale-95"
-                  aria-label="Zmniejsz liczbę osób"
-                >
-                  -
-                </button>
-                <span className="w-8 text-center font-black text-lg text-neutral-900">{peopleCount}</span>
-                <button
-                  type="button"
-                  onClick={() => setPeopleCount((c) => Math.min(6, c + 1))}
-                  className="w-9 h-9 rounded-xl bg-neutral-100 hover:bg-neutral-200 font-bold text-lg text-neutral-800 transition active:scale-95"
-                  aria-label="Zwiększ liczbę osób"
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            <PeopleRollerPicker
+              value={peopleCount}
+              onChange={setPeopleCount}
+            />
           </div>
         )}
 

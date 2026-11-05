@@ -119,10 +119,18 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
   it('przechodzi przez 5 kroków ankiety, modyfikację potrawy w kwadratach, listę zakupów z Alternatywami i skanowanie karty', () => {
     render(<App />);
 
-    // Krok 1: Na ile osób?
+    // Krok 1: Na ile osób? - roller wyboru (1-6)
     expect(
       screen.getByText(/1\) Na ile osób przygotować plan\?/i)
     ).toBeInTheDocument();
+    const roller = screen.getByRole('spinbutton');
+    expect(roller).toBeInTheDocument();
+    expect(roller).toHaveAttribute('aria-valuenow', '2');
+    
+    // Test rollera: zmiana na 4 osoby za pomocą przycisku lub kliknięcia opcji
+    fireEvent.click(screen.getByRole('button', { name: /4 osoby/i }));
+    expect(roller).toHaveAttribute('aria-valuenow', '4');
+
     fireEvent.click(screen.getByText('Dalej'));
 
     // Krok 2: Ile dni?
