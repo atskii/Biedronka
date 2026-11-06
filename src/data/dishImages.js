@@ -13,11 +13,17 @@ export const DISH_IMAGES = {
   sniadanie_kanapki_hummus_ogorek: '/images/dishes/sniadanie_kanapki_hummus_ogorek.jpg',
 
   // Obiady (100% z grafikami AI na ceramicznym talerzu z góry)
+  obiad_kurczak_pieczone_ziemniaki_brokul: '/images/dishes/obiad_kurczak_pieczone_ziemniaki_brokul.jpg',
+  obiad_tortilla_indyk_warzywa: '/images/dishes/obiad_tortilla_indyk_warzywa.jpg',
   obiad_zapiekanka_ziemniaki_mieso_dluga: '/images/dishes/obiad_zapiekanka_ziemniaki_mieso_dluga.jpg',
   obiad_vege_tofu_bataty_cukinia: '/images/dishes/obiad_vege_tofu_bataty_cukinia.jpg',
   obiad_tunczyk_bowl_ziemniaki: '/images/dishes/obiad_tunczyk_bowl_ziemniaki.jpg',
+  obiad_vege_zapiekanka_warzywna_2h: '/images/dishes/obiad_vege_zapiekanka_warzywna_2h.jpg',
 
   // Kolacje (100% z grafikami AI na ceramicznym talerzu z góry)
+  kolacja_wrap_hummus_warzywa_fit: '/images/dishes/kolacja_wrap_hummus_warzywa_fit.jpg',
+  kolacja_salatka_losos_awokado: '/images/dishes/kolacja_salatka_losos_awokado.jpg',
+  kolacja_salatka_tunczyk_jajko: '/images/dishes/kolacja_salatka_tunczyk_jajko.jpg',
   kolacja_tortilla_mozzarella_szpinak: '/images/dishes/kolacja_tortilla_mozzarella_szpinak.jpg',
   kolacja_talerz_hummus_warzywa_tofu: '/images/dishes/kolacja_talerz_hummus_warzywa_tofu.jpg',
   kolacja_serek_wiejski_pomidory_chleb: '/images/dishes/kolacja_serek_wiejski_pomidory_chleb.jpg',

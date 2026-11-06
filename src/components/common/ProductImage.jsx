@@ -35,14 +35,14 @@ export default function ProductImage({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-neutral-200/80 bg-neutral-100 flex items-center justify-center shrink-0 shadow-2xs ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-neutral-200/80 bg-white flex items-center justify-center shrink-0 shadow-2xs ${className}`}
     >
       <img
         src={imageUrl}
         alt={alt || name || 'Produkt Biedronka'}
         loading="lazy"
         onError={() => setHasError(true)}
-        className={`w-full h-full object-cover transition-transform duration-300 hover:scale-105 ${imgClassName}`}
+        className={`w-full h-full object-contain p-0.5 transition-transform duration-300 hover:scale-105 ${imgClassName}`}
       />
     </div>
   );
