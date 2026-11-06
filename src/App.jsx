@@ -204,9 +204,11 @@ export default function App() {
     <div className="min-h-screen bg-neutral-200/50 text-neutral-900 font-sans flex justify-center">
       {/* Kontener mobilny o szerokości dopasowanej do smartfona (max-w-md = 448px) */}
       <div
-        className={`w-full max-w-md bg-[#FBFBF7] relative flex flex-col shadow-2xl ${
-          stage === 'survey' ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'
-        }`}
+        className={`w-full max-w-md relative flex flex-col shadow-2xl ${
+          stage === 'survey' || stage === 'summary'
+            ? 'h-[100dvh] max-h-[100dvh] overflow-hidden'
+            : 'min-h-screen'
+        } ${stage === 'summary' ? 'bg-amber-300' : 'bg-[#FBFBF7]'}`}
       >
         {/* Kompaktowy pasek górny (TopAppBar) */}
         <header className="sticky top-0 shrink-0 z-30 bg-red-700 text-white shadow-sm border-b border-red-800 relative overflow-hidden">
@@ -229,7 +231,7 @@ export default function App() {
         {/* Główna zawartość mobilna */}
         <main
           className={`flex-1 px-3 sm:px-4 pt-2 sm:pt-3 ${
-            stage === 'survey'
+            stage === 'survey' || stage === 'summary'
               ? 'pb-20 flex flex-col min-h-0 overflow-hidden'
               : 'pb-20'
           }`}
