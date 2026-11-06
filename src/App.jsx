@@ -18,9 +18,9 @@ import {
 export default function App() {
   const [stage, setStage] = useState('survey'); // 'survey' | 'plan' | 'shopping' | 'summary'
   const [surveyParams, setSurveyParams] = useState({
-    peopleCount: 2,
-    daysCount: 3,
-    budgetPln: 216,
+    peopleCount: 1,
+    daysCount: 1,
+    budgetPln: 36,
     dietType: 'nie_vege',
     targetCalories: 2000,
     excludedProductIds: [],
@@ -28,9 +28,9 @@ export default function App() {
 
   const [mealPlan, setMealPlan] = useState(() =>
     generateMealPlan({
-      peopleCount: 2,
-      daysCount: 3,
-      budgetPln: 216,
+      peopleCount: 1,
+      daysCount: 1,
+      budgetPln: 36,
       dietType: 'nie_vege',
       targetCalories: 2000,
       excludedProductIds: [],

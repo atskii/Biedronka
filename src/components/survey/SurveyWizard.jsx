@@ -215,11 +215,11 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
   const [step, setStep] = useState(1);
   const [showExclusionSearch, setShowExclusionSearch] = useState(false);
 
-  const [peopleCount, setPeopleCount] = useState(initialValues?.peopleCount || 2);
-  const [daysCount, setDaysCount] = useState(initialValues?.daysCount || 3);
+  const [peopleCount, setPeopleCount] = useState(initialValues?.peopleCount || 1);
+  const [daysCount, setDaysCount] = useState(initialValues?.daysCount || 1);
   const [budgetPresetMultiplier, setBudgetPresetMultiplier] = useState(36);
   const [budgetPln, setBudgetPln] = useState(
-    initialValues?.budgetPln || (initialValues?.peopleCount || 2) * (initialValues?.daysCount || 3) * 36
+    initialValues?.budgetPln || (initialValues?.peopleCount || 1) * (initialValues?.daysCount || 1) * 36
   );
   const [dietType, setDietType] = useState(initialValues?.dietType || 'nie_vege');
   const [targetCalories, setTargetCalories] = useState(

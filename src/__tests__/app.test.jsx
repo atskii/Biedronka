@@ -295,7 +295,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     ).toBeInTheDocument();
     const roller = screen.getByRole('spinbutton');
     expect(roller).toBeInTheDocument();
-    expect(roller).toHaveAttribute('aria-valuenow', '2');
+    expect(roller).toHaveAttribute('aria-valuenow', '1');
     
     // Test rollera: zmiana na 4 osoby za pomocą kliknięcia opcji na rolce
     fireEvent.click(screen.getByRole('button', { name: '4' }));
@@ -313,7 +313,7 @@ describe('Pełny przepływ użytkownika w interfejsie Moja Biedronka', () => {
     expect(screen.getByText('Liczba dni:')).toBeInTheDocument();
     const daysRoller = screen.getByRole('spinbutton', { name: /Liczba dni/i });
     expect(daysRoller).toBeInTheDocument();
-    expect(daysRoller).toHaveAttribute('aria-valuenow', '3');
+    expect(daysRoller).toHaveAttribute('aria-valuenow', '1');
 
     // Test rollera: zmiana na 5 dni za pomocą kliknięcia
     fireEvent.click(screen.getByRole('button', { name: '5' }));
