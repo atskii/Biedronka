@@ -24,6 +24,22 @@ export default function DishModificationModal({
 
   if (!dish) return null;
 
+  const formatPortionSubtitle = (ing) => {
+    const label = (ing.displayAmount || '').trim();
+    const gramsStr = `${ing.portionGrams}g`;
+    const gramsSpaced = `${ing.portionGrams} g`;
+    const mlSpaced = `${ing.portionGrams} ml`;
+    if (
+      !label ||
+      label.toLowerCase() === gramsStr ||
+      label.toLowerCase() === gramsSpaced ||
+      label.toLowerCase() === mlSpaced
+    ) {
+      return label || gramsSpaced;
+    }
+    return `${label} (${ing.portionGrams}g)`;
+  };
+
   const activeIngredient =
     editingIngredientIndex !== null ? dish.ingredients[editingIngredientIndex] : null;
 
@@ -92,7 +108,7 @@ export default function DishModificationModal({
                       {activeIngredient.metrics.name}
                     </p>
                     <p className="text-xs text-neutral-600 font-semibold mt-0.5">
-                      {activeIngredient.displayAmount} ({activeIngredient.portionGrams}g) •{' '}
+                      {formatPortionSubtitle(activeIngredient)} •{' '}
                       {activeIngredient.metrics.kcalPerPerson} kcal
                     </p>
                   </div>
@@ -345,7 +361,7 @@ export default function DishModificationModal({
                           {ing.metrics.name}
                         </p>
                         <p className="text-[11px] text-neutral-600 font-semibold mt-0.5">
-                          {ing.displayAmount} ({ing.portionGrams}g)
+                          {formatPortionSubtitle(ing)}
                         </p>
                       </div>
 

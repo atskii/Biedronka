@@ -217,6 +217,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
   const [peopleCount, setPeopleCount] = useState(initialValues?.peopleCount || 2);
   const [daysCount, setDaysCount] = useState(initialValues?.daysCount || 3);
+  const [budgetPresetMultiplier, setBudgetPresetMultiplier] = useState(36);
   const [budgetPln, setBudgetPln] = useState(
     initialValues?.budgetPln || (initialValues?.peopleCount || 2) * (initialValues?.daysCount || 3) * 36
   );
@@ -238,8 +239,33 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
     if (!q) {
       return EXCLUSION_GROUPS;
     }
-    return EXCLUSION_GROUPS.filter((g) =>
-      g.name.toLowerCase().includes(q)
+    return EXCLUSION_GROUPS.filter((g) => {
+      if (g.name.toLowerCase().includes(q) || g.id.toLowerCase().includes(q)) {
+        return true;
+      }
+      return g.productIds.some((pid) => {
+        const prod = PRODUCTS[pid];
+        if (!prod) return false;
+        return (
+          prod.name.toLowerCase().includes(q) ||
+          (prod.brand && prod.brand.toLowerCase().includes(q))
+        );
+      });
+    });
+  }, [searchQuery]);
+
+  // Pojedyncze produkty z grup wieloproduktowych pasujące do zapytania (np. "tuńczyk", "chleb żytni", "wafle")
+  const filteredSingleProducts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q.length < 2) return [];
+    const multiGroupIds = new Set(
+      EXCLUSION_GROUPS.filter((g) => g.productIds.length > 1).flatMap((g) => g.productIds)
+    );
+    return Object.values(PRODUCTS).filter(
+      (prod) =>
+        multiGroupIds.has(prod.id) &&
+        (prod.name.toLowerCase().includes(q) ||
+          (prod.brand && prod.brand.toLowerCase().includes(q)))
     );
   }, [searchQuery]);
 
@@ -247,9 +273,18 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
     return EXCLUSION_GROUPS.filter(
       (g) =>
         excludedProductIds.includes(g.id) ||
-        g.productIds.some((pid) => excludedProductIds.includes(pid))
+        g.productIds.every((pid) => excludedProductIds.includes(pid))
     );
   }, [excludedProductIds]);
+
+  const selectedIndividualProducts = useMemo(() => {
+    const coveredByFullGroup = new Set(selectedGroups.flatMap((g) => g.productIds));
+    return excludedProductIds
+      .filter((id) => PRODUCTS[id] && !coveredByFullGroup.has(id))
+      .map((id) => PRODUCTS[id]);
+  }, [excludedProductIds, selectedGroups]);
+
+  const totalExcludedBadgesCount = selectedGroups.length + selectedIndividualProducts.length;
 
   const dailyPerPerson = Number(
     (budgetPln / Math.max(1, peopleCount * daysCount)).toFixed(2)
@@ -334,7 +369,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               value={peopleCount}
               onChange={(p) => {
                 setPeopleCount(p);
-                setBudgetPln(Math.round(daysCount * p * 36));
+                setBudgetPln(Math.round(daysCount * p * budgetPresetMultiplier));
               }}
               min={1}
               max={6}
@@ -354,7 +389,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               value={daysCount}
               onChange={(d) => {
                 setDaysCount(d);
-                setBudgetPln(Math.round(d * peopleCount * 36));
+                setBudgetPln(Math.round(d * peopleCount * budgetPresetMultiplier));
               }}
               min={1}
               max={7}
@@ -379,28 +414,34 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
               </div>
 
               <p className="text-xs font-semibold text-neutral-600 mb-4">
-                To około <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę (~{Number((dailyPerPerson / 4).toFixed(2))} zł za posiłek)
+                To maksymalnie <strong className="text-neutral-900">{dailyPerPerson} zł</strong> dziennie na osobę (~{Number((dailyPerPerson / 4).toFixed(2))} zł za posiłek)
               </p>
 
               <input
                 type="range"
-                min={Math.max(50, peopleCount * daysCount * 25)}
-                max={Math.max(200, peopleCount * daysCount * 60)}
-                step={peopleCount * daysCount > 8 ? 10 : 5}
+                min={Math.round(peopleCount * daysCount * 26)}
+                max={Math.round(peopleCount * daysCount * 60)}
+                step={peopleCount * daysCount <= 2 ? 2 : peopleCount * daysCount > 8 ? 10 : 5}
                 value={budgetPln}
-                onChange={(e) => setBudgetPln(Number(e.target.value))}
+                onChange={(e) => {
+                  const nextVal = Number(e.target.value);
+                  setBudgetPln(nextVal);
+                  setBudgetPresetMultiplier(
+                    Math.max(26, Math.round(nextVal / Math.max(1, peopleCount * daysCount)))
+                  );
+                }}
                 className="w-full accent-red-700 cursor-pointer h-2 bg-neutral-200 rounded-lg"
               />
 
               <div className="grid grid-cols-3 gap-2 mt-4">
                 {[
                   {
-                    label: 'Oszczędny',
+                    label: 'Ekonomiczny',
                     multiplier: 28,
                     hint: '~7 zł / posiłek',
                   },
                   {
-                    label: 'Optymalny',
+                    label: 'Standardowy',
                     multiplier: 36,
                     hint: '~9 zł / posiłek',
                   },
@@ -411,12 +452,16 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                   },
                 ].map((preset) => {
                   const val = Math.round(peopleCount * daysCount * preset.multiplier);
-                  const isSelected = Math.abs(budgetPln - val) <= 5;
+                  const tol = Math.max(2, Math.round(peopleCount * daysCount * 1.5));
+                  const isSelected = Math.abs(budgetPln - val) <= tol;
                   return (
                     <button
                       key={preset.label}
                       type="button"
-                      onClick={() => setBudgetPln(val)}
+                      onClick={() => {
+                        setBudgetPresetMultiplier(preset.multiplier);
+                        setBudgetPln(val);
+                      }}
                       className={`py-2.5 px-2 rounded-xl border text-center transition ${
                         isSelected
                           ? 'border-red-600 bg-red-50 text-red-700 font-bold'
@@ -499,7 +544,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
 
             <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/90 shadow-sm">
               <span className="text-xs sm:text-sm font-extrabold text-neutral-500 block mb-1">
-                Liczba kalorii dziennie na osobę:
+                Maksymalny dzienny limit kalorii na osobę:
               </span>
 
               <div className="text-3xl sm:text-4xl font-black text-red-700 my-2 tracking-tight">
@@ -528,9 +573,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 </div>
               </div>
 
-              {/* Przyciski stopni kalorycznych - tylko wartości kcal */}
-              <div className="grid grid-cols-4 gap-1.5 mt-4">
-                {[1600, 1800, 2000, 2400].map((val) => {
+              {/* Przyciski stopni kalorycznych - szybki wybór limitu */}
+              <div className="grid grid-cols-5 gap-1.5 mt-4">
+                {[1600, 1800, 2000, 2100, 2400].map((val) => {
                   const isSelected = targetCalories === val;
                   return (
                     <button
@@ -543,7 +588,7 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                           : 'border-neutral-200 bg-neutral-50 text-neutral-800 hover:bg-neutral-100 font-bold'
                       }`}
                     >
-                      <p className="text-xs">{val} kcal</p>
+                      <p className="text-[11px] sm:text-xs">{val} kcal</p>
                     </button>
                   );
                 })}
@@ -601,9 +646,9 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                     </div>
                     <span className="text-base font-extrabold text-neutral-900">Tak</span>
                   </div>
-                  {selectedGroups.length > 0 && (
+                  {totalExcludedBadgesCount > 0 && (
                     <span className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
-                      Wykluczono: {selectedGroups.length}
+                      Wykluczono: {totalExcludedBadgesCount}
                     </span>
                   )}
                 </div>
@@ -650,30 +695,44 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                 {/* Rozwijana lista wyników po kliknięciu w wyszukiwarkę */}
                 {(isSearchOpen || exclusionMode === 'tak') && (
                   <div className="mt-3 space-y-3 pt-3 border-t border-neutral-100">
-                    {selectedGroups.length > 0 && (
+                    {totalExcludedBadgesCount > 0 && (
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mb-1.5">
                           Wykluczone:
                         </p>
                         <div className="flex flex-wrap gap-1.5">
-                          {selectedGroups.map((group) => {
-                            return (
-                              <button
-                                key={group.id}
-                                type="button"
-                                onClick={() => handleToggleGroup(group)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs"
-                              >
-                                <ProductImage
-                                  productId={group.productIds[0]}
-                                  name={group.name}
-                                  className="w-4 h-4 rounded-md shrink-0"
-                                />
-                                <span>{group.name}</span>
-                                <X className="w-3.5 h-3.5 ml-0.5" />
-                              </button>
-                            );
-                          })}
+                          {selectedGroups.map((group) => (
+                            <button
+                              key={group.id}
+                              type="button"
+                              onClick={() => handleToggleGroup(group)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs"
+                            >
+                              <ProductImage
+                                productId={group.productIds[0]}
+                                name={group.name}
+                                className="w-4 h-4 rounded-md shrink-0"
+                              />
+                              <span>{group.name}</span>
+                              <X className="w-3.5 h-3.5 ml-0.5" />
+                            </button>
+                          ))}
+                          {selectedIndividualProducts.map((prod) => (
+                            <button
+                              key={prod.id}
+                              type="button"
+                              onClick={() => handleToggleExclude(prod.id)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs"
+                            >
+                              <ProductImage
+                                productId={prod.id}
+                                name={prod.name}
+                                className="w-4 h-4 rounded-md shrink-0"
+                              />
+                              <span className="truncate max-w-[160px]">{prod.name}</span>
+                              <X className="w-3.5 h-3.5 ml-0.5" />
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -716,6 +775,53 @@ export default function SurveyWizard({ initialValues, onCompleteSurvey }) {
                           </button>
                         );
                       })}
+
+                      {filteredSingleProducts.map((prod) => {
+                        const isProdExcluded = excludedProductIds.includes(prod.id);
+                        return (
+                          <button
+                            key={`single_${prod.id}`}
+                            type="button"
+                            onClick={() => handleToggleExclude(prod.id)}
+                            className={`w-full p-2.5 rounded-2xl flex items-center justify-between text-left transition text-xs font-bold ${
+                              isProdExcluded
+                                ? 'bg-red-50/90 text-red-700 border border-red-300 ring-1 ring-red-400'
+                                : 'bg-white text-neutral-800 hover:bg-neutral-50 border border-neutral-200/80'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 truncate">
+                              <ProductImage
+                                productId={prod.id}
+                                name={prod.name}
+                                className="w-9 h-9 rounded-xl shrink-0"
+                              />
+                              <div className="truncate">
+                                <span className="block truncate text-xs font-bold text-neutral-900">
+                                  {prod.name}
+                                </span>
+                                <span className="block text-[10px] font-semibold text-neutral-500">
+                                  Pojedynczy produkt
+                                </span>
+                              </div>
+                            </div>
+                            <span
+                              className={`text-[11px] px-2.5 py-1 rounded-lg shrink-0 ml-2 font-black transition ${
+                                isProdExcluded
+                                  ? 'bg-red-600 text-white shadow-2xs'
+                                  : 'bg-neutral-200/80 text-neutral-700 hover:bg-neutral-300'
+                              }`}
+                            >
+                              {isProdExcluded ? 'Wykluczono' : 'Wyklucz'}
+                            </span>
+                          </button>
+                        );
+                      })}
+
+                      {filteredGroups.length === 0 && filteredSingleProducts.length === 0 && (
+                        <p className="text-xs text-neutral-500 text-center py-3 font-medium">
+                          Brak produktów pasujących do „{searchQuery}”.
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}

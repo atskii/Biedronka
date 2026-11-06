@@ -83,7 +83,10 @@ export default function MealPlanView({
         <div className="bg-black/20 rounded-2xl p-2.5 px-3 border border-white/10 flex items-center justify-between gap-2 text-xs">
           <div>
             <span className="text-[9px] font-bold uppercase tracking-wider text-red-100/80 block leading-tight">
-              Średnio / dzień {plan.targetCalories ? `• Cel: ${plan.targetCalories} kcal` : ''}
+              Średnio / dzień{' '}
+              {typeof plan.targetCalories === 'number'
+                ? `• Limit: ${plan.targetCalories} kcal`
+                : '• Bez limitu kcal'}
             </span>
             <p className="text-sm font-black text-white leading-tight mt-0.5">
               {plan.avgDailyKcalPerPerson} kcal

@@ -83,10 +83,12 @@ describe('Silnik Jadłospisu i Listy Zakupów Moja Biedronka', () => {
     });
   });
 
-  it('nigdy nie generuje planu droższego niż wybrany budżet i przestrzega limitu cenowego', () => {
+  it('nigdy nie generuje planu droższego niż wybrany budżet i różnicuje warianty Ekonomiczny / Standardowy / Swobodny', () => {
     const testCases = [
+      { people: 1, days: 1, budget: 28 },
       { people: 2, days: 3, budget: 168 },
       { people: 2, days: 3, budget: 216 },
+      { people: 2, days: 3, budget: 288 },
       { people: 6, days: 3, budget: 504 },
       { people: 6, days: 3, budget: 648 },
     ];
@@ -97,11 +99,109 @@ describe('Silnik Jadłospisu i Listy Zakupów Moja Biedronka', () => {
         daysCount: days,
         budgetPln: budget,
         dietType: 'nie_vege',
-        targetCalories: 2000,
+        targetCalories: 2100,
       });
+      const basket = buildShoppingListFromPlan(plan);
 
       expect(plan.totalCostPln).toBeLessThanOrEqual(budget);
+      expect(basket.totalBasketCostPln).toBeLessThanOrEqual(budget);
     });
+
+    // Wariant Ekonomiczny < Standardowy < Swobodny
+    const ecoPlan = generateMealPlan({
+      peopleCount: 2,
+      daysCount: 3,
+      budgetPln: 168,
+      dietType: 'nie_vege',
+      targetCalories: 2100,
+    });
+    const stdPlan = generateMealPlan({
+      peopleCount: 2,
+      daysCount: 3,
+      budgetPln: 216,
+      dietType: 'nie_vege',
+      targetCalories: 2100,
+    });
+    const freePlan = generateMealPlan({
+      peopleCount: 2,
+      daysCount: 3,
+      budgetPln: 288,
+      dietType: 'nie_vege',
+      targetCalories: 2100,
+    });
+
+    expect(ecoPlan.totalCostPln).toBeLessThan(stdPlan.totalCostPln);
+    expect(stdPlan.totalCostPln).toBeLessThan(freePlan.totalCostPln);
+  });
+
+  it('ściśle przestrzega limitu kalorycznego (np. 2100 kcal, 1600 kcal, 2400 kcal) w każdym dniu i każdej diecie', () => {
+    const diets = ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'];
+    const limits = [1600, 1800, 2100, 2400];
+
+    for (const dietType of diets) {
+      for (const targetCalories of limits) {
+        const plan = generateMealPlan({
+          peopleCount: 2,
+          daysCount: 3,
+          budgetPln: 216,
+          dietType,
+          targetCalories,
+          excludedProductIds: [],
+        });
+
+        expect(plan.avgDailyKcalPerPerson).toBeLessThanOrEqual(targetCalories);
+        expect(plan.avgDailyKcalPerPerson).toBeGreaterThanOrEqual(targetCalories - 90);
+
+        plan.days.forEach((day) => {
+          expect(day.dayKcalPerPerson).toBeLessThanOrEqual(targetCalories);
+          expect(day.dayKcalPerPerson).toBeGreaterThanOrEqual(targetCalories - 100);
+        });
+      }
+    }
+  });
+
+  it('skutecznie wyklucza całe działy (np. pieczywo, ryby, tofu) oraz pojedyncze produkty we wszystkich dietach', () => {
+    const diets = ['nie_vege', 'vege', 'bez_glutenu', 'bez_laktozy'];
+
+    for (const dietType of diets) {
+      const plan = generateMealPlan({
+        peopleCount: 2,
+        daysCount: 3,
+        budgetPln: 190,
+        dietType,
+        targetCalories: 2100,
+        excludedProductIds: ['pieczywo', 'ryby', 'tunczyk_w_sosie_wlasnym_fit', 'tofu'],
+      });
+
+      const forbiddenIds = [
+        'chleb_zytni_fit',
+        'bulki_kajzerki_promo',
+        'chleb_proteinowy_fit',
+        'tortilla_pszenna_promo',
+        'wafle_ryzowe_bg_fit',
+        'chleb_bezglutenowy_fit',
+        'tunczyk_w_sosie_wlasnym_fit',
+        'losos_wedzony_marinero_fit',
+        'tofu_wedzone_govege_fit',
+        'tofu_naturalne_govege_fit',
+      ];
+
+      plan.days.forEach((day) => {
+        expect(day.dayKcalPerPerson).toBeLessThanOrEqual(2100);
+        day.meals.forEach((meal) => {
+          meal.ingredients.forEach((ing) => {
+            expect(forbiddenIds).not.toContain(ing.productId);
+          });
+        });
+      });
+
+      const basket = buildShoppingListFromPlan(plan);
+      basket.sections.forEach((sec) => {
+        sec.items.forEach((item) => {
+          expect(forbiddenIds).not.toContain(item.productId);
+        });
+      });
+    }
   });
 
   it('zwraca zamienniki (produkty z gazetki żółte oraz produkty Fit) dla kwadratu składnika i przelicza cenę oraz makro', () => {
